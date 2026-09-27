@@ -1,0 +1,10 @@
+Print a config value
+
+Usage:
+  cobrademo config get <key> [flags]
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+  -v, --verbose   increase verbosity

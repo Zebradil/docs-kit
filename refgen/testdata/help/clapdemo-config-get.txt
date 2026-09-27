@@ -1,0 +1,10 @@
+Print a config value; the description is long on purpose so that clap wraps it at the fixed width
+
+Usage: clapdemo config get [OPTIONS] <KEY>
+
+Arguments:
+  <KEY>  
+
+Options:
+  -v, --verbose  Increase verbosity
+  -h, --help     Print help
