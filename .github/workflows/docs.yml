@@ -66,11 +66,12 @@ jobs:
         run: |
           if [ -z "$(git status --porcelain -- "$REFERENCE")" ]; then exit 0; fi
           echo "::error::Generated CLI reference in $INPUTS_DIRECTORY/$REFERENCE is stale. Run refgen locally and commit the result."
+          echo "Lines marked - are committed, + are what refgen generates now."
           git --no-pager diff --stat -- "$REFERENCE"
           git --no-pager diff -- "$REFERENCE"
           git ls-files --others --exclude-standard -- "$REFERENCE" | sed 's/^/new file: /'
           echo
-          echo "Regenerate from $INPUTS_DIRECTORY/ with the freshly built $BIN: npx help2md --bin <path to $BIN> --out $REFERENCE"
+          echo "Regenerate from $INPUTS_DIRECTORY/ with the freshly built $BIN: npx --no-install help2md --bin <path to $BIN> --out $REFERENCE"
           exit 1
         env:
           INPUTS_DIRECTORY: ${{ inputs.directory }}
