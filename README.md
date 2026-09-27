@@ -9,3 +9,13 @@ Shared kit for generating browsable documentation and a landing page for small O
 - Agent skills (Claude Code plugin): `docs-audit`, `docs-bootstrap`, `docs-write`.
 
 Status: design phase. See the design map issue and its sub-issues.
+
+## refgen/help2md
+
+Generates CLI reference pages from `--help` output (clap and cobra), one Starlight page per command:
+
+```sh
+node refgen/help2md.mjs --bin target/release/kasha --out docs/src/content/docs/reference/cli
+```
+
+Pages are named after the command path (`kasha.md`, `kasha-config-set.md`). `help` and cobra's default `completion` are skipped. Tests: `node --test`.
