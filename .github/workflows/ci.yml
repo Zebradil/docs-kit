@@ -69,6 +69,5 @@ jobs:
           $CLAUDE plugin marketplace add "$SOURCE"
           $CLAUDE plugin install docs-kit@docs-kit
           $CLAUDE plugin details docs-kit | grep -F 'Skills (3)  docs-audit, docs-bootstrap, docs-write'
-          ls -A ~/.claude/plugins/cache/docs-kit/docs-kit/*/
           # The skills reach kit files through ${CLAUDE_SKILL_DIR}/../.., the plugin root.
           ls ~/.claude/plugins/cache/docs-kit/docs-kit/*/{CONTEXT.md,schema/site.schema.json,refgen/help2md.mjs}
