@@ -17,6 +17,29 @@ npm ci
 node schema/validate.mjs path/to/docs/site.yaml
 ```
 
+## Using the kit
+
+The repository root is the npm package `@zebradil/starlight-kit`, installed as a git dependency pinned to a tag ([ADR 0001](docs/adr/0001-kit-as-repo-root-git-dependency.md)). A consuming project's `docs/` needs three files besides `site.yaml` and its pages under `src/content/docs/`:
+
+```jsonc
+// package.json
+{ "private": true, "type": "module", "dependencies": { "@zebradil/starlight-kit": "github:Zebradil/docs-kit#v0.1.0" } }
+```
+
+```js
+// astro.config.mjs
+import docsKit from '@zebradil/starlight-kit';
+
+export default docsKit({ site: 'site.yaml' });
+```
+
+```js
+// src/content.config.mjs
+export { collections } from '@zebradil/starlight-kit/content';
+```
+
+Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
+
 Terms used across the kit are defined in [`CONTEXT.md`](CONTEXT.md).
 
 Status: design phase. See the design map issue and its sub-issues.
