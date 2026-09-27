@@ -17,4 +17,5 @@ features:
 links:
   - { label: Content contract, href: "https://github.com/Zebradil/docs-kit/blob/main/schema/site.schema.json" }
 reference:
-  cli: { bin: clapdemo, path: refgen/testdata/bin/clapdemo }
+  # The replay binary needs no build; this command only proves build runs from the repository root.
+  cli: { bin: clapdemo, build: "test -x refgen/testdata/bin/clapdemo", path: refgen/testdata/bin/clapdemo }

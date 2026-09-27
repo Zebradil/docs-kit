@@ -42,7 +42,8 @@ jobs:
           const cli = parse(require("fs").readFileSync("site.yaml", "utf8"))?.reference?.cli ?? {};
           console.log("cli=" + JSON.stringify(cli))' >> "$GITHUB_OUTPUT"
 
-      - if: inputs.nix
+      - name: Install Nix
+        if: inputs.nix
         uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
       - name: Build CLI
         if: fromJSON(steps.site.outputs.cli).build
@@ -77,9 +78,11 @@ jobs:
           INPUTS_DIRECTORY: ${{ inputs.directory }}
           BIN: ${{ fromJSON(steps.site.outputs.cli).bin }}
 
-      - run: npx --no-install astro build
+      - name: Build site
+        run: npx --no-install astro build
 
-      - if: inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+      - name: Upload site
+        if: inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ${{ inputs.directory }}/dist
