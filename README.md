@@ -6,7 +6,7 @@ Shared kit for generating browsable documentation and a landing page for small O
 - One layout, swappable designs (theme = CSS tokens).
 - Reference pages generated from code (CLI `--help`, config schema), never handwritten.
 - Reusable GitHub Actions workflow: generate, build, deploy to GitHub Pages.
-- Agent skills (Claude Code plugin): [`docs-audit`](skills/docs-audit/SKILL.md), `docs-bootstrap`, [`docs-write`](skills/docs-write/SKILL.md).
+- Agent skills (Claude Code plugin): [`docs-audit`](skills/docs-audit/SKILL.md), [`docs-bootstrap`](skills/docs-bootstrap/SKILL.md), [`docs-write`](skills/docs-write/SKILL.md).
 
 ## Content contract
 
