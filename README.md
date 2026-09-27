@@ -101,7 +101,7 @@ Until then the deploy job fails. This repository builds [the fixture](packages/s
 
 Terms used across the kit are defined in [`CONTEXT.md`](CONTEXT.md).
 
-Status: design phase. See the design map issue and its sub-issues.
+Status: pre-release. Kit, workflow and skills are in place; no `v*` tag yet, first pilot pending. See the design map issue (#1).
 
 ## refgen/help2md
 
