@@ -7,11 +7,15 @@
     ".": "./packages/starlight-kit/index.mjs",
     "./content": "./packages/starlight-kit/content.mjs"
   },
+  "bin": {
+    "help2md": "refgen/help2md.mjs"
+  },
   "files": [
     "packages/starlight-kit",
     "!packages/starlight-kit/fixture",
     "schema/site.schema.json",
-    "schema/validate.mjs"
+    "schema/validate.mjs",
+    "refgen/help2md.mjs"
   ],
   "scripts": {
     "test": "node --test",
