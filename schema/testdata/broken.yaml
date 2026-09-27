@@ -1,0 +1,14 @@
+# Deliberately invalid: no tagline, 7 features, unknown theme.
+name: broken
+theme: neon
+repo: https://github.com/Zebradil/broken
+install:
+  - { label: Go, code: "go install github.com/Zebradil/broken@latest" }
+features:
+  - { title: a, body: a }
+  - { title: b, body: b }
+  - { title: c, body: c }
+  - { title: d, body: d }
+  - { title: e, body: e }
+  - { title: f, body: f }
+  - { title: g, body: g }

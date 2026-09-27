@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../schema/site.schema.json
+name: kasha
+tagline: Net-local Nix binary cache box that serves signed store paths at LAN speed.
+theme: default
+repo: https://github.com/Zebradil/kasha
+install:
+  - { label: Nix, code: "nix run github:Zebradil/kasha -- serve" }
+  - { label: Docker, code: "docker run -d -p 5000:5000 ghcr.io/zebradil/kasha-box:edge" }
+  - { label: Cargo, code: "cargo install --git https://github.com/Zebradil/kasha" }
+features:
+  - title: Single static binary
+    body: No nix and no database on the box; the index is rebuilt from narinfos at boot.
+  - title: Authenticated pushes
+    body: Accepts `nix copy` over HTTP with a write token; every narinfo must be signed or content-addressed.
+  - title: Mirrors a remote cache
+    body: Syncs manifest-listed generations to and from an S3-compatible bucket.
+links:
+  - { label: Changelog, href: "https://github.com/Zebradil/kasha/blob/main/CHANGELOG.md" }
+reference:
+  cli: { bin: kasha, build: "cargo build --release", path: target/release/kasha }
