@@ -19,3 +19,55 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+
+  fixture:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/starlight-kit/fixture
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      # Resolves the kit's current dependencies like a fresh consumer; the fixture lock (used by
+      # pages.yml) keeps whatever the kit declared when it was generated, since npm never refreshes a
+      # file: dependency's metadata.
+      - run: npm install --no-package-lock
+      - name: Build with each theme
+        run: |
+          for theme in default mono; do
+            sed -i "s/^theme: .*/theme: $theme/" site.yaml
+            npx astro build --outDir "dist-$theme"
+          done
+      # A theme changes look only: pages must be identical except for the hashed stylesheet name.
+      - name: Themes change only CSS
+        run: |
+          cd dist-default
+          find . -name '*.html' | while read -r page; do
+            diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
+                 <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-mono/$page")
+          done
+
+  plugin:
+    runs-on: ubuntu-latest
+    env:
+      CLAUDE: npx --yes @anthropic-ai/claude-code@2.1.283
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: $CLAUDE plugin validate --strict .
+      # Installs from GitHub, as a user would, so the plugin is copied into the cache rather than
+      # loaded in place from the checkout.
+      - name: Install and list skills
+        env:
+          SOURCE: ${{ github.event.pull_request.head.repo.full_name || github.repository }}#${{ github.head_ref || github.ref_name }}
+        run: |
+          $CLAUDE plugin marketplace add "$SOURCE"
+          $CLAUDE plugin install docs-kit@docs-kit
+          $CLAUDE plugin details docs-kit | grep -F 'Skills (3)  docs-audit, docs-bootstrap, docs-write'
+          # The skills reach kit files through ${CLAUDE_SKILL_DIR}/../.., the plugin root.
+          ls ~/.claude/plugins/cache/docs-kit/docs-kit/*/{CONTEXT.md,schema/site.schema.json,refgen/help2md.mjs}

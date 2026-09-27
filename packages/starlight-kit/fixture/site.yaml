@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../schema/site.schema.json
+name: fixture
+tagline: Test site that exercises every part of the docs-kit layout.
+theme: default
+repo: https://github.com/Zebradil/docs-kit
+install:
+  - { label: Nix, code: "nix run github:Zebradil/fixture" }
+  - { label: Cargo, code: "cargo install fixture" }
+  - { label: Go, code: "go install github.com/Zebradil/fixture@latest" }
+features:
+  - title: Rendered from site.yaml
+    body: The landing page has no hand-written prose; edit `site.yaml` instead.
+  - title: Swappable themes
+    body: A theme is a CSS file of design tokens and changes look only.
+  - title: Diátaxis sidebar
+    body: Getting started, guides, concepts and reference, in that order.
+links:
+  - { label: Content contract, href: "https://github.com/Zebradil/docs-kit/blob/main/schema/site.schema.json" }
+reference:
+  # The replay binary needs no build; this command only proves build runs from the repository root.
+  cli: { bin: clapdemo, build: "test -x refgen/testdata/bin/clapdemo", path: refgen/testdata/bin/clapdemo }

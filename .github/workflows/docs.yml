@@ -1,0 +1,103 @@
+name: docs
+
+on:
+  workflow_call:
+    inputs:
+      directory:
+        description: Docs directory holding site.yaml and package.json, relative to the repository root.
+        type: string
+        default: docs
+      nix:
+        description: Install Nix before the reference.cli build command runs, for builds like `nix build`.
+        type: boolean
+        default: false
+      deploy:
+        description: Deploy to GitHub Pages on pushes to the default branch. Needs Pages enabled with source "GitHub Actions".
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
+    env:
+      REFERENCE: src/content/docs/reference/cli
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ inputs.directory }}/package-lock.json
+      - run: npm ci
+
+      - name: Read reference.cli from site.yaml
+        id: site
+        run: >-
+          node -e 'const {parse} = require("yaml");
+          const cli = parse(require("fs").readFileSync("site.yaml", "utf8"))?.reference?.cli ?? {};
+          console.log("cli=" + JSON.stringify(cli))' >> "$GITHUB_OUTPUT"
+
+      - name: Install Nix
+        if: inputs.nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+      - name: Build CLI
+        if: fromJSON(steps.site.outputs.cli).build
+        working-directory: .
+        env:
+          BUILD: ${{ fromJSON(steps.site.outputs.cli).build }}
+        run: eval "$BUILD"
+
+      - name: Generate CLI reference
+        if: fromJSON(steps.site.outputs.cli).bin
+        env:
+          BIN: ${{ fromJSON(steps.site.outputs.cli).bin }}
+          BIN_PATH: ${{ fromJSON(steps.site.outputs.cli).path }}
+        # --no-install: never fall back to the unrelated `help2md` package on the npm registry.
+        run: |
+          [ -z "$BIN_PATH" ] || BIN=$GITHUB_WORKSPACE/$BIN_PATH
+          npx --no-install help2md --bin "$BIN" --out "$REFERENCE"
+
+      - name: Check generated reference is committed
+        if: github.event_name == 'pull_request' && fromJSON(steps.site.outputs.cli).bin
+        run: |
+          if [ -z "$(git status --porcelain -- "$REFERENCE")" ]; then exit 0; fi
+          echo "::error::Generated CLI reference in $INPUTS_DIRECTORY/$REFERENCE is stale. Run refgen locally and commit the result."
+          echo "Lines marked - are committed, + are what refgen generates now."
+          git --no-pager diff --stat -- "$REFERENCE"
+          git --no-pager diff -- "$REFERENCE"
+          git ls-files --others --exclude-standard -- "$REFERENCE" | sed 's/^/new file: /'
+          echo
+          echo "Regenerate from $INPUTS_DIRECTORY/ with the freshly built $BIN: npx --no-install help2md --bin <path to $BIN> --out $REFERENCE"
+          exit 1
+        env:
+          INPUTS_DIRECTORY: ${{ inputs.directory }}
+          BIN: ${{ fromJSON(steps.site.outputs.cli).bin }}
+
+      - name: Build site
+        run: npx --no-install astro build
+
+      - name: Upload site
+        if: inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ inputs.directory }}/dist
+
+  deploy:
+    needs: build
+    if: inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    concurrency: pages
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

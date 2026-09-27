@@ -1,0 +1,16 @@
+Demo CLI used as a help2md test fixture.
+
+Usage:
+  cobrademo [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  config      Manage configuration
+  help        Help about any command
+  run         Run the thing
+
+Flags:
+  -h, --help      help for cobrademo
+  -v, --verbose   increase verbosity
+
+Use "cobrademo [command] --help" for more information about a command.

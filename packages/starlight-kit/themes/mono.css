@@ -1,0 +1,30 @@
+/* Grayscale, monospace everywhere. */
+:root {
+  --sl-font: var(--sl-font-system-mono);
+  --sl-color-white: hsl(0, 0%, 100%);
+  --sl-color-gray-1: hsl(0, 0%, 92%);
+  --sl-color-gray-2: hsl(0, 0%, 76%);
+  --sl-color-gray-3: hsl(0, 0%, 56%);
+  --sl-color-gray-4: hsl(0, 0%, 36%);
+  --sl-color-gray-5: hsl(0, 0%, 22%);
+  --sl-color-gray-6: hsl(0, 0%, 12%);
+  --sl-color-black: hsl(0, 0%, 4%);
+  --sl-color-accent-low: hsl(0, 0%, 20%);
+  --sl-color-accent: hsl(0, 0%, 90%);
+  --sl-color-accent-high: hsl(0, 0%, 100%);
+}
+
+:root[data-theme='light'] {
+  --sl-color-white: hsl(0, 0%, 0%);
+  --sl-color-gray-1: hsl(0, 0%, 10%);
+  --sl-color-gray-2: hsl(0, 0%, 22%);
+  --sl-color-gray-3: hsl(0, 0%, 36%);
+  --sl-color-gray-4: hsl(0, 0%, 56%);
+  --sl-color-gray-5: hsl(0, 0%, 78%);
+  --sl-color-gray-6: hsl(0, 0%, 93%);
+  --sl-color-gray-7: hsl(0, 0%, 97%);
+  --sl-color-black: hsl(0, 0%, 100%);
+  --sl-color-accent-low: hsl(0, 0%, 88%);
+  --sl-color-accent: hsl(0, 0%, 15%);
+  --sl-color-accent-high: hsl(0, 0%, 0%);
+}

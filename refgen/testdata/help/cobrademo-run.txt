@@ -1,0 +1,14 @@
+Run the thing
+
+Usage:
+  cobrademo run <target> [flags]
+
+Aliases:
+  run, r
+
+Flags:
+  -c, --count int   number of times (default 1)
+  -h, --help        help for run
+
+Global Flags:
+  -v, --verbose   increase verbosity

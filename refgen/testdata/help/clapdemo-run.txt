@@ -1,0 +1,11 @@
+Run the thing
+
+Usage: clapdemo run [OPTIONS] <TARGET>
+
+Arguments:
+  <TARGET>  Target to run
+
+Options:
+  -c, --count <COUNT>  Number of times [default: 1]
+  -v, --verbose        Increase verbosity
+  -h, --help           Print help
