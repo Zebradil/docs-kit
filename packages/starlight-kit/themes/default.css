@@ -1,0 +1,12 @@
+/* Starlight's stock palette and fonts with a teal accent. */
+:root {
+  --sl-color-accent-low: hsl(174, 60%, 16%);
+  --sl-color-accent: hsl(174, 70%, 40%);
+  --sl-color-accent-high: hsl(174, 70%, 82%);
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: hsl(174, 60%, 88%);
+  --sl-color-accent: hsl(174, 80%, 30%);
+  --sl-color-accent-high: hsl(174, 80%, 18%);
+}
