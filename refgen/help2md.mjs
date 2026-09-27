@@ -6,8 +6,10 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-// Fixed width and no colors so output is identical on every machine and CI run.
-const ENV = { ...process.env, COLUMNS: '100', NO_COLOR: '1', CLICOLOR: '0', TERM: 'dumb' };
+// Fixed width and no colors so output is identical on every machine and CI run. Only PATH is inherited:
+// clap's `env` feature prints each variable's current value in --help (`[env: KASHA_TOKEN=secret]`),
+// which would put local secrets into committed pages and make them differ from CI's.
+const ENV = { PATH: process.env.PATH, COLUMNS: '100', NO_COLOR: '1', CLICOLOR: '0', TERM: 'dumb' };
 const MAX_DEPTH = 8;
 
 const help = (bin, path) =>

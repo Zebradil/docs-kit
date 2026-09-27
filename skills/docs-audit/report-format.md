@@ -12,7 +12,7 @@ A gap is the heading `## G<n>: <title>` and everything up to the next `## ` head
 
 | Field | Values | Meaning |
 |---|---|---|
-| `status` | `open` \| `partial` \| `resolved` | `docs-audit` writes `open`; `docs-write` sets `partial` or `resolved` |
+| `status` | `open` \| `partial` \| `resolved` | `docs-audit` writes `open`; `docs-write` or `docs-bootstrap` sets `partial` or `resolved` |
 | `severity` | `high` \| `medium` \| `low` | high: a reader cannot get started or is told something false; medium: a task, command, or idea has no page; low: minor inaccuracy, thin help text, cosmetic |
 | `area` | `site.yaml` \| `getting-started` \| `guides` \| `concepts` \| `reference` \| `readme` | Part of the content contract the gap belongs to |
 | `fix-by` | `docs-bootstrap` \| `docs-write` \| `refgen` \| `code` \| `human` | Who closes it. `refgen`: regenerate and commit reference pages. `code`: a source change, e.g. help text. `human`: an owner decision |
@@ -21,7 +21,7 @@ A gap is the heading `## G<n>: <title>` and everything up to the next `## ` head
 | `evidence` | nested list | One item per fact: `` `path:line` `` or `` `path:start-end` `` plus what it shows, or `` `command` `` plus the decisive output line. An item with neither starts with `unverified:` |
 | `action` | one paragraph | What to do, sized for one run of the `fix-by` owner: one page to write, or one set of edits to one file. Names the seed material to draw from |
 | `issue` | `#<n>` | Optional. Issue filed for this gap |
-| `resolution` | one line | Optional. Added by `docs-write`: commit or PR, and what is left when `partial` |
+| `resolution` | one line | Optional. Added by `docs-write` or `docs-bootstrap`: commit or PR, and what is left when `partial` |
 
 IDs are stable across runs: a re-audit keeps the ID of every gap it still finds, drops gaps it no longer finds, and numbers new gaps after the highest ID in the previous report.
 
