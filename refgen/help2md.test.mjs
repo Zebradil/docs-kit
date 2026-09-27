@@ -3,7 +3,7 @@
 // Fixture CLI changed? Run testdata/regen.sh (needs cargo and go) and review the golden diff.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -28,4 +28,13 @@ test('clap and cobra help produce the golden pages, byte-identical across runs',
   );
   assert.deepEqual(first, expected);
   assert.deepEqual(second, first);
+});
+
+test('the caller environment never reaches the help output', () => {
+  const tmp = mkdtempSync(join(tmpdir(), 'help2md-'));
+  const bin = join(tmp, 'envdemo');
+  writeFileSync(bin, '#!/bin/sh\necho "Usage: envdemo [env: TOKEN=$TOKEN]"\n');
+  chmodSync(bin, 0o755);
+  execFileSync('node', [join(dir, 'help2md.mjs'), '--bin', bin, '--out', tmp], { env: { ...process.env, TOKEN: 'secret' } });
+  assert.match(readFileSync(join(tmp, 'envdemo.md'), 'utf8'), /\[env: TOKEN=\]/);
 });
