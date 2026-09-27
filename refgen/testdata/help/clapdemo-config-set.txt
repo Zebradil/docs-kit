@@ -1,0 +1,11 @@
+Set a config value
+
+Usage: clapdemo config set [OPTIONS] <KEY> <VALUE>
+
+Arguments:
+  <KEY>    
+  <VALUE>  
+
+Options:
+  -v, --verbose  Increase verbosity
+  -h, --help     Print help

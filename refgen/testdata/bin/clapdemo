@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stands in for the real fixture CLI: `<name> a b --help` prints ../help/<name>-a-b.txt.
+n=$(basename "$0"); for a; do [ "$a" = --help ] || n="$n-$a"; done
+exec cat "$(dirname "$0")/../help/$n.txt"

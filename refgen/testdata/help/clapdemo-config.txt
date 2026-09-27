@@ -1,0 +1,13 @@
+Manage configuration
+
+Usage: clapdemo config [OPTIONS] <COMMAND>
+
+Commands:
+  get   Print a config value; the description is long on purpose so that clap wraps it at the fixed
+        width
+  set   Set a config value [alias: put]
+  help  Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Increase verbosity
+  -h, --help     Print help

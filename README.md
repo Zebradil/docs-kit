@@ -20,3 +20,13 @@ node schema/validate.mjs path/to/docs/site.yaml
 Terms used across the kit are defined in [`CONTEXT.md`](CONTEXT.md).
 
 Status: design phase. See the design map issue and its sub-issues.
+
+## refgen/help2md
+
+Generates CLI reference pages from `--help` output (clap and cobra), one Starlight page per command:
+
+```sh
+node refgen/help2md.mjs --bin target/release/kasha --out docs/src/content/docs/reference/cli
+```
+
+Pages are named after the command path (`kasha.md`, `kasha-config-set.md`). `help` and cobra's default `completion` are skipped. Tests: `node --test`.

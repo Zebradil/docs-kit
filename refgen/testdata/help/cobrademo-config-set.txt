@@ -1,0 +1,13 @@
+Set a config value
+
+Usage:
+  cobrademo config set <key> <value> [flags]
+
+Aliases:
+  set, put
+
+Flags:
+  -h, --help   help for set
+
+Global Flags:
+  -v, --verbose   increase verbosity
