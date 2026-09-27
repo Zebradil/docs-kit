@@ -46,10 +46,16 @@ Build with `npm ci && npx astro build` from `docs/`. The site is served at `http
 
 ```yaml
 name: docs
-on: { push: { branches: [main] }, pull_request: {} }
+on:
+  push: { branches: [main] }
+  pull_request:
 permissions: { contents: read, pages: write, id-token: write }
-jobs: { docs: { uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.1.0 } }
+jobs:
+  docs:
+    uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.1.0
 ```
+
+Keep `uses:` on its own indented line: Renovate's github-actions manager finds refs line by line and misses one inside a flow mapping.
 
 The caller must grant `pages: write` and `id-token: write`: a called workflow can only narrow the caller's token permissions, never widen them, and the deploy job needs both.
 
