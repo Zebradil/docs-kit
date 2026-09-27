@@ -1,0 +1,46 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { Card, CardGrid, Code, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
+import site from 'virtual:docs-kit/site';
+
+const [first] = site.install;
+const escape = (text: string) =>
+  text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+// ponytail: only `inline code` is rendered; switch to a Markdown renderer if bodies need links or emphasis.
+const inline = (text: string) => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+const frontmatter = {
+  title: site.name,
+  description: site.tagline,
+  template: 'splash' as const,
+  hero: {
+    title: escape(site.name),
+    tagline: escape(site.tagline),
+    actions: [
+      { text: 'Get started', link: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/getting-started/`, icon: 'right-arrow' },
+      { text: 'GitHub', link: site.repo, icon: 'github', variant: 'minimal' },
+    ],
+  },
+};
+---
+
+<StarlightPage frontmatter={frontmatter}>
+  <Code code={first.code} lang="sh" title={first.label} />
+
+  <h2>Install</h2>
+  <Tabs>
+    {site.install.map((m) => <TabItem label={m.label}><Code code={m.code} lang="sh" /></TabItem>)}
+  </Tabs>
+
+  <h2>Features</h2>
+  <CardGrid>
+    {site.features.map((f) => <Card title={escape(f.title)}><Fragment set:html={inline(f.body)} /></Card>)}
+  </CardGrid>
+
+  {!!site.links?.length && (
+    <>
+      <h2>Links</h2>
+      {site.links.map((l) => <LinkCard title={l.label} href={l.href} />)}
+    </>
+  )}
+</StarlightPage>

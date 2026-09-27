@@ -1,14 +1,26 @@
 {
-  "name": "docs-kit",
+  "name": "@zebradil/starlight-kit",
   "private": true,
   "type": "module",
   "license": "MIT",
+  "exports": {
+    ".": "./packages/starlight-kit/index.mjs",
+    "./content": "./packages/starlight-kit/content.mjs"
+  },
+  "files": [
+    "packages/starlight-kit",
+    "!packages/starlight-kit/fixture",
+    "schema/site.schema.json",
+    "schema/validate.mjs"
+  ],
   "scripts": {
     "test": "node --test",
     "validate": "node schema/validate.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
+    "@astrojs/starlight": "0.42.4",
     "ajv": "8.20.0",
+    "astro": "7.3.5",
     "yaml": "2.9.1"
   }
 }
