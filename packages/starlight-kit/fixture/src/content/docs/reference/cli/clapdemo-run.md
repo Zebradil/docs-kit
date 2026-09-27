@@ -14,7 +14,7 @@ Arguments:
   <TARGET>  Target to run
 
 Options:
-  -c, --count <COUNT>  Number of times [default: 1]
+  -c, --count <COUNT>  Number of times, hand-edited [default: 3]
   -v, --verbose        Increase verbosity
   -h, --help           Print help
 ```
