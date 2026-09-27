@@ -8,6 +8,26 @@ Shared kit for generating browsable documentation and a landing page for small O
 - Reusable GitHub Actions workflow: generate, build, deploy to GitHub Pages.
 - Agent skills (Claude Code plugin): [`docs-audit`](skills/docs-audit/SKILL.md), [`docs-bootstrap`](skills/docs-bootstrap/SKILL.md), [`docs-write`](skills/docs-write/SKILL.md).
 
+## Claude Code plugin
+
+This repository is a Claude Code plugin marketplace with one plugin, `docs-kit`, holding the three skills. In a Claude Code session:
+
+```text
+/plugin marketplace add Zebradil/docs-kit
+/plugin install docs-kit@docs-kit
+```
+
+The shell equivalents are `claude plugin marketplace add Zebradil/docs-kit` and `claude plugin install docs-kit@docs-kit`. The skills run as `/docs-kit:docs-audit` and so on, or when a request matches their description.
+
+Recommended flow in a consuming project:
+
+1. `docs-audit` writes the gap report `docs/.audit.md`; it never edits docs.
+2. Review the report: reorder, drop, or fix gaps before any prose lands.
+3. `docs-bootstrap` sets up `docs/`, `site.yaml`, the workflow, and Renovate, then opens a PR.
+4. `docs-write` closes one gap per run with one PR. Repeat, re-auditing when the code moves.
+
+The plugin carries no `version`, so its version is the commit it was installed from. Third-party marketplaces do not auto-update by default; pull the latest `main` with `claude plugin marketplace update docs-kit && claude plugin update docs-kit@docs-kit`.
+
 ## Content contract
 
 Every consuming project has a `docs/site.yaml` validated by [`schema/site.schema.json`](schema/site.schema.json); see [`examples/site.yaml`](examples/site.yaml). Validate one locally:

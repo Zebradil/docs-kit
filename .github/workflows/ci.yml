@@ -49,3 +49,25 @@ jobs:
             diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
                  <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-mono/$page")
           done
+
+  plugin:
+    runs-on: ubuntu-latest
+    env:
+      CLAUDE: npx --yes @anthropic-ai/claude-code@2.1.283
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: $CLAUDE plugin validate --strict .
+      # Installs from GitHub, as a user would, so the plugin is copied into the cache rather than
+      # loaded in place from the checkout.
+      - name: Install and list skills
+        env:
+          SOURCE: ${{ github.event.pull_request.head.repo.full_name || github.repository }}#${{ github.head_ref || github.ref_name }}
+        run: |
+          $CLAUDE plugin marketplace add "$SOURCE"
+          $CLAUDE plugin install docs-kit@docs-kit
+          $CLAUDE plugin details docs-kit | grep -F 'Skills (3)  docs-audit, docs-bootstrap, docs-write'
+          # The skills reach kit files through ${CLAUDE_SKILL_DIR}/../.., the plugin root.
+          ls ~/.claude/plugins/cache/docs-kit/docs-kit/*/{CONTEXT.md,schema/site.schema.json,refgen/help2md.mjs}
