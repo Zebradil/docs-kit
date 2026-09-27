@@ -16,3 +16,5 @@ features:
     body: Getting started, guides, concepts and reference, in that order.
 links:
   - { label: Content contract, href: "https://github.com/Zebradil/docs-kit/blob/main/schema/site.schema.json" }
+reference:
+  cli: { bin: clapdemo, path: refgen/testdata/bin/clapdemo }

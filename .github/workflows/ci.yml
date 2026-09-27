@@ -31,8 +31,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-        working-directory: .
+      # Resolves the kit's current dependencies like a fresh consumer; the fixture lock (used by
+      # pages.yml) keeps whatever the kit declared when it was generated, since npm never refreshes a
+      # file: dependency's metadata.
+      - run: npm install --no-package-lock
       - name: Build with each theme
         run: |
           for theme in default mono; do
@@ -43,7 +45,7 @@ jobs:
       - name: Themes change only CSS
         run: |
           cd dist-default
-          for page in $(find . -name '*.html'); do
+          find . -name '*.html' | while read -r page; do
             diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
                  <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-mono/$page")
           done
