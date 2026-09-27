@@ -40,6 +40,39 @@ export { collections } from '@zebradil/starlight-kit/content';
 
 Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
 
+### Publishing with GitHub Actions
+
+[`.github/workflows/docs.yml`](.github/workflows/docs.yml) is a reusable workflow. A consuming project calls it from `.github/workflows/docs.yml`, pinned to the same tag as the kit in `docs/package.json`:
+
+```yaml
+name: docs
+on: { push: { branches: [main] }, pull_request: {} }
+permissions: { contents: read, pages: write, id-token: write }
+jobs: { docs: { uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.1.0 } }
+```
+
+The caller must grant `pages: write` and `id-token: write`: a called workflow can only narrow the caller's token permissions, never widen them, and the deploy job needs both.
+
+On every run it installs `docs/` with `npm ci`, builds the CLI with `reference.cli.build` (run from the repository root) when set, regenerates the CLI reference with `help2md` into `docs/src/content/docs/reference/cli`, and builds the site with `npx astro build` (which validates `site.yaml`). On a pull request it fails if the regenerated reference differs from the committed one and prints the diff. On a push to the default branch it deploys `docs/dist` to GitHub Pages.
+
+Inputs, all optional:
+
+| Input | Default | Use |
+|---|---|---|
+| `directory` | `docs` | Docs directory, relative to the repository root. |
+| `nix` | `false` | Install Nix first, for `build: nix build` and friends. |
+| `deploy` | `true` | Deploy on pushes to the default branch. |
+
+Runs on `ubuntu-latest`, which already has Rust (cargo, rustup) and Go (default version linked into `/usr/bin`; a newer `go` line in `go.mod` makes Go download that toolchain itself); see the [runner image tool list](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md).
+
+One manual step per repository, by its owner: enable Pages with GitHub Actions as the source, in Settings → Pages → Build and deployment → Source: GitHub Actions, or:
+
+```sh
+gh api --method POST repos/<owner>/<repo>/pages -f build_type=workflow
+```
+
+Until then the deploy job fails. This repository builds [the fixture](packages/starlight-kit/fixture/) through the workflow ([`pages.yml`](.github/workflows/pages.yml)) and deploys it only when the repository variable `PAGES_ENABLED` is `true`; set it after enabling Pages (`gh variable set PAGES_ENABLED --body true`).
+
 Terms used across the kit are defined in [`CONTEXT.md`](CONTEXT.md).
 
 Status: design phase. See the design map issue and its sub-issues.
@@ -51,5 +84,13 @@ Generates CLI reference pages from `--help` output (clap and cobra), one Starlig
 ```sh
 node refgen/help2md.mjs --bin target/release/kasha --out docs/src/content/docs/reference/cli
 ```
+
+The kit ships it as the `help2md` binary, so a consuming project runs the version it pins, from `docs/`:
+
+```sh
+npx --no-install help2md --bin ../target/release/kasha --out src/content/docs/reference/cli
+```
+
+`--no-install` matters: without it, a missing kit makes `npx` fetch an unrelated `help2md` package from the npm registry.
 
 Pages are named after the command path (`kasha.md`, `kasha-config-set.md`). `help` and cobra's default `completion` are skipped. Tests: `node --test`.

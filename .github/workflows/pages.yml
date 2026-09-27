@@ -1,0 +1,20 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  docs:
+    uses: ./.github/workflows/docs.yml
+    with:
+      directory: packages/starlight-kit/fixture
+      # Deploying fails until Pages is enabled (source: GitHub Actions); the owner sets this repo variable then.
+      deploy: ${{ vars.PAGES_ENABLED == 'true' }}
