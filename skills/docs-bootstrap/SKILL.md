@@ -5,7 +5,7 @@ description: Set up docs-kit in a project (docs/ skeleton, site.yaml, generated 
 
 # docs-bootstrap
 
-Add docs-kit to the consuming project (the current repository) and open one PR. Terms (consuming project, content contract, refgen) are those of the kit's `CONTEXT.md`.
+Add docs-kit to the consuming project (the current repository) and open one PR. Terms (consuming project, content contract, refgen) are those of the kit's [`CONTEXT.md`](../../CONTEXT.md).
 
 Every step is **fill-only**: it creates what is missing and leaves what exists byte-identical, whether a file, a `site.yaml` field or comment, or a page. A second run on a bootstrapped project therefore ends with no commit and no PR; say so and stop.
 

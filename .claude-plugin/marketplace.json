@@ -1,0 +1,15 @@
+{
+  "name": "docs-kit",
+  "description": "Skills that audit, bootstrap, and write docs-kit documentation sites.",
+  "owner": { "name": "Zebradil", "url": "https://github.com/Zebradil" },
+  "plugins": [
+    {
+      "name": "docs-kit",
+      "source": "./",
+      "description": "docs-audit, docs-bootstrap, docs-write: audit a project's docs against the docs-kit contract, set up the site, and close gaps one page at a time.",
+      "author": { "name": "Zebradil", "url": "https://github.com/Zebradil" },
+      "license": "MIT",
+      "repository": "https://github.com/Zebradil/docs-kit"
+    }
+  ]
+}
