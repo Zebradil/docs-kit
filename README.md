@@ -41,10 +41,12 @@ node schema/validate.mjs path/to/docs/site.yaml
 
 The repository root is the npm package `@zebradil/starlight-kit`, installed as a git dependency pinned to a tag ([ADR 0001](docs/adr/0001-kit-as-repo-root-git-dependency.md)). A consuming project's `docs/` needs three files besides `site.yaml` and its pages under `src/content/docs/`:
 
+<!-- x-release-please-start-version -->
 ```jsonc
 // package.json
 { "private": true, "type": "module", "dependencies": { "@zebradil/starlight-kit": "github:Zebradil/docs-kit#v0.1.0" } }
 ```
+<!-- x-release-please-end -->
 
 ```js
 // astro.config.mjs
@@ -64,6 +66,7 @@ Build with `npm ci && npx astro build` from `docs/`. The site is served at `http
 
 [`.github/workflows/docs.yml`](.github/workflows/docs.yml) is a reusable workflow. A consuming project calls it from `.github/workflows/docs.yml`, pinned to the same tag as the kit in `docs/package.json`:
 
+<!-- x-release-please-start-version -->
 ```yaml
 name: docs
 on:
@@ -74,6 +77,7 @@ jobs:
   docs:
     uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.1.0
 ```
+<!-- x-release-please-end -->
 
 Keep `uses:` on its own indented line: Renovate's github-actions manager finds refs line by line and misses one inside a flow mapping.
 

@@ -1,0 +1,34 @@
+name: release-please
+
+# Merging the release PR tags vX.Y.Z, the ref consumers pin in docs/package.json and in `uses:` of
+# the reusable docs workflow.
+#
+# The release PR is opened with an octo-sts App token (policy `release-please` in Zebradil/.github):
+# this repository disallows GITHUB_TOKEN from creating pull requests, and a GITHUB_TOKEN-created PR
+# would not fire `pull_request` events, so CI would never run on the release PR.
+
+on:
+  push:
+    branches: [main]
+  # release-please only compares an open release PR's title and body, so it will not pick up a
+  # config change on its own. Closing the PR and dispatching this rebuilds it.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        id: sts
+        with:
+          domain: sts.zebradil.dev
+          scope: ${{ github.repository_owner }}
+          identity: release-please
+
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.sts.outputs.token }}
