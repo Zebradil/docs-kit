@@ -19,3 +19,31 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+
+  fixture:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/starlight-kit/fixture
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+        working-directory: .
+      - name: Build with each theme
+        run: |
+          for theme in default mono; do
+            sed -i "s/^theme: .*/theme: $theme/" site.yaml
+            npx astro build --outDir "dist-$theme"
+          done
+      # A theme changes look only: pages must be identical except for the hashed stylesheet name.
+      - name: Themes change only CSS
+        run: |
+          cd dist-default
+          for page in $(find . -name '*.html'); do
+            diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
+                 <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-mono/$page")
+          done
