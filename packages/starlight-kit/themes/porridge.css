@@ -1,0 +1,42 @@
+/* Warm oat and roast neutrals with a honey accent; Fraunces headings over Instrument Sans. */
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/instrument-sans';
+@import '@fontsource-variable/jetbrains-mono';
+
+:root {
+  --sl-font: 'Instrument Sans Variable', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --kit-font-display: 'Fraunces Variable', Georgia, serif;
+
+  --sl-color-white: #f2eadb;
+  --sl-color-gray-1: #e5dac7;
+  --sl-color-gray-2: #c9b8a2;
+  --sl-color-gray-3: #a8957f;
+  --sl-color-gray-4: #6b5a4c;
+  --sl-color-gray-5: #3f3128;
+  --sl-color-gray-6: #211a15;
+  --sl-color-black: #17120e;
+  --sl-color-accent-low: #3a2a18;
+  --sl-color-accent: #e39a3b;
+  --sl-color-accent-high: #f6ce96;
+}
+
+:root[data-theme='light'] {
+  --sl-color-white: #1e1712;
+  --sl-color-gray-1: #2b2119;
+  --sl-color-gray-2: #4a3a2e;
+  --sl-color-gray-3: #6b5a4c;
+  --sl-color-gray-4: #9a8876;
+  --sl-color-gray-5: #cdb99a;
+  --sl-color-gray-6: #e5dac6;
+  --sl-color-gray-7: #efe7d8;
+  --sl-color-black: #f7f2e8;
+  --sl-color-accent-low: #f4ddbb;
+  --sl-color-accent: #8a4b1f;
+  --sl-color-accent-high: #4a2a16;
+}
+
+:is(h1, h2, h3, .site-title, .card .title) {
+  font-family: var(--kit-font-display);
+  letter-spacing: -0.015em;
+}

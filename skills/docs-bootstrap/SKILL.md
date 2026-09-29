@@ -52,6 +52,7 @@ Field sources, first hit wins. `docs/.audit.md` with a `fix-by: docs-bootstrap` 
 | `tagline` | README's first paragraph, Cargo `description`; one sentence, at most 160 chars |
 | `repo` | `gh repo view --json url -q .url`; else Cargo `repository`, `go.mod` module path, GitHub links in README or CHANGELOG |
 | `theme` | `default` |
+| `logo` | An SVG logo already in the repository, copied to `docs/src/assets/`; omit when there is none |
 | `install` | README's own order. Only commands that install without secrets or config: `docker pull <image>` rather than a `docker run` needing env, `nix profile install github:<owner>/<repo>` when the flake has `packages.default`, `cargo install <crate>` only when the crate is on crates.io (`curl -s https://crates.io/api/v1/crates/<crate>`), else `cargo install --git <repo>`, `go install <module>/<main pkg>@latest`, Homebrew from goreleaser `brews` |
 | `features` | 3 to 6 from README capability claims, each backed by code |
 | `links` | `CHANGELOG.md`, docs.rs or pkg.go.dev when the project ships a library |

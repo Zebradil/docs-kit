@@ -24,6 +24,7 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
       starlight({
         title: site.name,
         description: site.tagline,
+        logo: site.logo && (site.logo.dark ? { light: site.logo.light, dark: site.logo.dark } : { src: site.logo.light }),
         social: [{ icon: 'github', label: 'GitHub', href: site.repo }],
         editLink: { baseUrl: `${site.repo}/edit/main/docs/` },
         customCss: [kitPath(`themes/${site.theme ?? 'default'}.css`)],

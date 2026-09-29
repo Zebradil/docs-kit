@@ -19,5 +19,5 @@ test('serves the site at <owner>.github.io/<repo>', () => {
 });
 
 test('rejects an invalid site.yaml with readable errors', () => {
-  assert.throws(() => docsKit({ site: path('../../schema/testdata/broken.yaml') }), /must be one of: default, mono/);
+  assert.throws(() => docsKit({ site: path('../../schema/testdata/broken.yaml') }), /must be one of: default, mono, porridge/);
 });
