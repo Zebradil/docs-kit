@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/Zebradil/docs-kit/compare/v0.1.0...v0.2.0) (2026-09-29)
+
+
+### Features
+
+* add porridge theme and optional site logo ([#26](https://github.com/Zebradil/docs-kit/issues/26)) ([f32bce7](https://github.com/Zebradil/docs-kit/commit/f32bce7c2deff96ffa03d0b2e4a5dd34085bdded))
+
 ## 0.1.0 (2026-09-27)
 
 
