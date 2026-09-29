@@ -20,8 +20,26 @@
     },
     "theme": {
       "description": "Design theme, one of the CSS token files shipped in packages/starlight-kit/themes/<name>.css. Changes look only, never layout.",
-      "enum": ["default", "mono"],
+      "enum": ["default", "mono", "porridge"],
       "default": "default"
+    },
+    "logo": {
+      "description": "Project logo shown next to the site title. Paths are relative to the docs directory and start with './', e.g. './src/assets/logo.svg'. For a favicon, put 'favicon.svg' in the docs directory's public/ folder.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["light"],
+      "properties": {
+        "light": {
+          "description": "Logo for the light color scheme, and for both schemes when 'dark' is omitted.",
+          "type": "string",
+          "pattern": "^\\./"
+        },
+        "dark": {
+          "description": "Logo for the dark color scheme.",
+          "type": "string",
+          "pattern": "^\\./"
+        }
+      }
     },
     "repo": {
       "description": "Repository URL, used for the GitHub link and 'edit this page' links.",

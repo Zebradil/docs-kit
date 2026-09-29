@@ -2,6 +2,7 @@
 name: fixture
 tagline: Test site that exercises every part of the docs-kit layout.
 theme: default
+logo: { light: ./src/assets/logo.svg, dark: ./src/assets/logo-dark.svg }
 repo: https://github.com/Zebradil/docs-kit
 install:
   - { label: Nix, code: "nix run github:Zebradil/fixture" }
