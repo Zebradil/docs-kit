@@ -29,3 +29,9 @@ test('logo paths are relative to the docs directory', () => {
   site.logo = { light: './src/assets/logo.svg', dark: 'src/assets/logo-dark.svg' };
   assert.deepEqual(validateSite(site), ['/logo/dark must match pattern "^\\./"']);
 });
+
+test('flow arrows are forward, back or both', () => {
+  const site = load('../examples/site.yaml');
+  site.flow = { steps: [{ from: 'a', to: 'b', label: 'c', arrow: 'up' }] };
+  assert.deepEqual(validateSite(site), ['/flow/steps/0/arrow must be one of: forward, back, both']);
+});

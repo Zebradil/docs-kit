@@ -1,46 +1,313 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { Card, CardGrid, Code, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
+import { Code, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
 import site from 'virtual:docs-kit/site';
 
-const [first] = site.install;
 const escape = (text: string) =>
   text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 // ponytail: only `inline code` is rendered; switch to a Markdown renderer if bodies need links or emphasis.
 const inline = (text: string) => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+// The hero's text column is Starlight's: the eyebrow rides in the tagline slot and CSS moves it above the title.
+const lede = `<span class="kit-lede">${inline(site.description ?? site.tagline)}</span>`;
+const eyebrow = site.eyebrow ? `<span class="kit-eyebrow">${escape(site.eyebrow)}</span>` : '';
+
+// The flow panel fills Starlight's hero image slot, which only takes an HTML string.
+const arrows = { forward: '→', back: '←', both: '↔' };
+const node = (name: string) =>
+  `<span class="kit-flow-node${name === site.flow?.highlight ? ' kit-flow-node-hl' : ''}">${escape(name)}</span>`;
+const flow =
+  site.flow &&
+  [
+    `<div class="kit-flow"><p class="kit-flow-title">${escape(site.flow.title ?? 'How it fits')}</p>`,
+    ...site.flow.steps.map(
+      (s) =>
+        `<div class="kit-flow-row">${node(s.from)}` +
+        `<span class="kit-flow-edge" data-arrow="${s.arrow ?? 'forward'}"><span class="kit-flow-label">${escape(s.label)}</span>` +
+        `<span class="sr-only">${arrows[s.arrow ?? 'forward']}</span></span>${node(s.to)}</div>`,
+    ),
+    site.flow.note ? `<p class="kit-flow-note">${inline(site.flow.note)}</p>` : '',
+    '</div>',
+  ].join('');
 
 const frontmatter = {
   title: site.name,
   description: site.tagline,
   template: 'splash' as const,
   hero: {
-    title: escape(site.name),
-    tagline: escape(site.tagline),
+    title: escape(site.headline ?? site.name),
+    tagline: eyebrow + lede,
+    ...(flow && { image: { html: flow } }),
     actions: [
       { text: 'Get started', link: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/getting-started/`, icon: 'right-arrow' },
       { text: 'GitHub', link: site.repo, icon: 'github', variant: 'minimal' },
     ],
   },
 };
+const number = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
 <StarlightPage frontmatter={frontmatter}>
-  <Code code={first.code} lang="sh" title={first.label} />
+  <div class="kit-landing not-content">
+    <section class="kit-install" aria-label="Install">
+      <Tabs>
+        {site.install.map((m) => <TabItem label={m.label}><Code code={m.code} lang="sh" /></TabItem>)}
+      </Tabs>
+    </section>
 
-  <h2>Install</h2>
-  <Tabs>
-    {site.install.map((m) => <TabItem label={m.label}><Code code={m.code} lang="sh" /></TabItem>)}
-  </Tabs>
+    <section>
+      <h2>Features</h2>
+      <div class="kit-features">
+        {
+          site.features.map((f, i) => (
+            <article class="kit-feature">
+              <span class="kit-number">{number(i)}</span>
+              <h3 set:html={escape(f.title)} />
+              <p set:html={inline(f.body)} />
+            </article>
+          ))
+        }
+      </div>
+    </section>
 
-  <h2>Features</h2>
-  <CardGrid>
-    {site.features.map((f) => <Card title={escape(f.title)}><Fragment set:html={inline(f.body)} /></Card>)}
-  </CardGrid>
+    {
+      site.components && (
+        <section class="kit-components">
+          <div>
+            <h2>{site.components.title ?? 'Components'}</h2>
+            {site.components.intro && <p set:html={inline(site.components.intro)} />}
+          </div>
+          <dl>
+            {site.components.items.map((c) => (
+              <div>
+                <dt>
+                  <code>{c.name}</code>
+                </dt>
+                <dd set:html={inline(c.body)} />
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
 
-  {!!site.links?.length && (
-    <>
-      <h2>Links</h2>
-      {site.links.map((l) => <LinkCard title={l.label} href={l.href} />)}
-    </>
-  )}
+    {
+      !!site.links?.length && (
+        <section>
+          <h2>Links</h2>
+          <div class="kit-links">
+            {site.links.map((l) => <LinkCard title={l.label} href={l.href} />)}
+          </div>
+        </section>
+      )
+    }
+  </div>
 </StarlightPage>
+
+<style is:global>
+  /* Hero: Starlight's markup in the kit's layout, scoped to the landing page with :has(). */
+  :root:has(.kit-landing) {
+    --kit-display: var(--kit-font-display, var(--sl-font));
+  }
+  :root:has(.kit-landing) .hero .tagline {
+    display: contents;
+  }
+  :root:has(.kit-landing) .hero h1 {
+    font-family: var(--kit-display);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .kit-eyebrow {
+    order: -1;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-text-accent);
+  }
+  .kit-lede {
+    font-size: clamp(var(--sl-text-base), calc(0.0625rem + 2vw), var(--sl-text-xl));
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  :root:has(.kit-flow) .hero > .hero-html {
+    order: 2;
+    width: 100%;
+  }
+  @media (min-width: 50rem) {
+    :root:has(.kit-flow) .hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 4rem;
+    }
+  }
+
+  /* Flow panel */
+  .kit-flow {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    padding: 1.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1.25rem;
+    background: var(--sl-color-bg-nav);
+    text-align: start;
+  }
+  .kit-flow-title {
+    margin: 0;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .kit-flow-row {
+    display: grid;
+    grid-template-columns: minmax(0, 9rem) minmax(4rem, 1fr) minmax(0, 9rem);
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .kit-flow-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.25rem;
+    padding: 0.25rem 0.75rem;
+    border: 1.5px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--sl-color-white);
+  }
+  .kit-flow-node-hl {
+    border-color: var(--sl-color-white);
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+  }
+  .kit-flow-edge {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 0.625rem;
+    border-bottom: 2px solid var(--sl-color-gray-3);
+  }
+  .kit-flow-edge::before,
+  .kit-flow-edge::after {
+    position: absolute;
+    bottom: -7px;
+    border-block: 6px solid transparent;
+  }
+  .kit-flow-edge:is([data-arrow='forward'], [data-arrow='both'])::after {
+    content: '';
+    right: -2px;
+    border-left: 9px solid var(--sl-color-gray-3);
+  }
+  .kit-flow-edge:is([data-arrow='back'], [data-arrow='both'])::before {
+    content: '';
+    left: -2px;
+    border-right: 9px solid var(--sl-color-gray-3);
+  }
+  .kit-flow-label {
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-2xs);
+    line-height: 1.3;
+    text-align: center;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-flow-note {
+    margin: 0;
+    padding-top: 0.875rem;
+    border-top: 1px dashed var(--sl-color-hairline-light);
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+
+  /* Sections below the hero */
+  .kit-landing {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5rem;
+    padding-bottom: 3rem;
+  }
+  .kit-landing h2 {
+    margin: 0 0 1.5rem;
+    font-family: var(--kit-display);
+    font-size: clamp(var(--sl-text-3xl), calc(1rem + 2.5vw), var(--sl-text-5xl));
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--sl-color-white);
+  }
+  .kit-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.25rem;
+  }
+  .kit-feature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .kit-feature h3 {
+    margin: 0;
+    font-family: var(--kit-display);
+    font-size: var(--sl-text-xl);
+    letter-spacing: -0.015em;
+    color: var(--sl-color-white);
+  }
+  .kit-feature p {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-number {
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-text-accent);
+  }
+  .kit-components {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 2rem 3rem;
+    padding: clamp(1.75rem, 4vw, 3.5rem);
+    border-radius: 1.5rem;
+    background: var(--sl-color-gray-6);
+  }
+  .kit-components p {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-components dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.25rem 3rem;
+    margin: 0;
+  }
+  @media (max-width: 50rem) {
+    .kit-components {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .kit-components dt code {
+    padding: 0;
+    background: none;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .kit-components dd {
+    margin: 0.25rem 0 0;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  .kit-links {
+    display: grid;
+    gap: 1rem;
+  }
+</style>
