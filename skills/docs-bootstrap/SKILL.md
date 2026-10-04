@@ -54,7 +54,10 @@ Field sources, first hit wins. `docs/.audit.md` with a `fix-by: docs-bootstrap` 
 | `theme` | `default` |
 | `logo` | An SVG logo already in the repository, copied to `docs/src/assets/`; omit when there is none |
 | `install` | README's own order. Only commands that install without secrets or config: `docker pull <image>` rather than a `docker run` needing env, `nix profile install github:<owner>/<repo>` when the flake has `packages.default`, `cargo install <crate>` only when the crate is on crates.io (`curl -s https://crates.io/api/v1/crates/<crate>`), else `cargo install --git <repo>`, `go install <module>/<main pkg>@latest`, Homebrew from goreleaser `brews` |
+| `headline`, `eyebrow`, `description` | Optional. README's opening: a headline no longer than the tagline, a category label, a one-to-three sentence lede; omit when the README has none |
 | `features` | 3 to 6 from README capability claims, each backed by code |
+| `flow` | Optional. Only connections the README or code states: who pushes to or reads from the project, what it syncs with; omit otherwise |
+| `components` | Optional. Binaries, subcommands, modules and packages the project ships, from the build files |
 | `links` | `CHANGELOG.md`, docs.rs or pkg.go.dev when the project ships a library |
 | `reference.cli` | Step 4 |
 

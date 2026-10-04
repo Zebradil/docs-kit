@@ -18,6 +18,24 @@
       "minLength": 1,
       "maxLength": 160
     },
+    "headline": {
+      "description": "Landing hero title. Defaults to 'name'.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "eyebrow": {
+      "description": "Short label above the landing hero title, e.g. the project category.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "description": {
+      "description": "Paragraph under the landing hero title, one to three sentences; renders `inline code`. Defaults to 'tagline'.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    },
     "theme": {
       "description": "Design theme, one of the CSS token files shipped in packages/starlight-kit/themes/<name>.css. Changes look only, never layout.",
       "enum": ["default", "mono", "porridge"],
@@ -87,6 +105,104 @@
             "description": "One or two sentences.",
             "type": "string",
             "minLength": 1
+          }
+        }
+      }
+    },
+    "flow": {
+      "description": "Panel beside the landing hero showing how the project fits with other systems: one row per connection.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "title": {
+          "description": "Panel heading. Defaults to 'How it fits'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "highlight": {
+          "description": "Node name drawn filled, usually the project itself.",
+          "type": "string",
+          "minLength": 1
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to", "label"],
+            "properties": {
+              "from": {
+                "description": "Left node.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "to": {
+                "description": "Right node.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "label": {
+                "description": "What travels between them, a few words.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "arrow": {
+                "description": "Arrow direction between from and to.",
+                "enum": ["forward", "back", "both"],
+                "default": "forward"
+              }
+            }
+          }
+        },
+        "note": {
+          "description": "One sentence under the rows; renders `inline code`.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "components": {
+      "description": "Landing section listing the parts the project ships: commands, modules, packages.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "title": {
+          "description": "Section heading. Defaults to 'Components'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "intro": {
+          "description": "One or two sentences beside the list; renders `inline code`.",
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "body"],
+            "properties": {
+              "name": {
+                "description": "Name as users type it, shown as code.",
+                "type": "string",
+                "minLength": 1
+              },
+              "body": {
+                "description": "One short sentence; renders `inline code`.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }

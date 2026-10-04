@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=../../../schema/site.schema.json
 name: fixture
 tagline: Test site that exercises every part of the docs-kit layout.
+headline: Every part of the layout, on one page.
+eyebrow: docs-kit fixture
+description: The landing page is rendered from `site.yaml` only; this fixture sets every optional field.
 theme: default
 logo: { light: ./src/assets/logo.svg, dark: ./src/assets/logo-dark.svg }
 repo: https://github.com/Zebradil/docs-kit
@@ -15,6 +18,19 @@ features:
     body: A theme is a CSS file of design tokens and changes look only.
   - title: Diátaxis sidebar
     body: Getting started, guides, concepts and reference, in that order.
+flow:
+  highlight: docs-kit
+  steps:
+    - { from: site.yaml, to: docs-kit, label: content contract }
+    - { from: docs-kit, to: Starlight, label: config + theme, arrow: both }
+    - { from: Pages, to: docs-kit, label: deploy, arrow: back }
+  note: Arrows point the way data moves.
+components:
+  intro: What the kit ships.
+  items:
+    - { name: "@zebradil/starlight-kit", body: Astro config and landing page. }
+    - { name: help2md, body: CLI reference from `--help`. }
+    - { name: docs.yml, body: Reusable build and deploy workflow. }
 links:
   - { label: Content contract, href: "https://github.com/Zebradil/docs-kit/blob/main/schema/site.schema.json" }
 reference:
