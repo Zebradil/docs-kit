@@ -44,7 +44,7 @@ The repository root is the npm package `@zebradil/starlight-kit`, installed as a
 <!-- x-release-please-start-version -->
 ```jsonc
 // package.json
-{ "private": true, "type": "module", "dependencies": { "@zebradil/starlight-kit": "github:Zebradil/docs-kit#v0.2.0" } }
+{ "private": true, "type": "module", "dependencies": { "@zebradil/starlight-kit": "github:Zebradil/docs-kit#v0.3.0" } }
 ```
 <!-- x-release-please-end -->
 
@@ -75,7 +75,7 @@ on:
 permissions: { contents: read, pages: write, id-token: write }
 jobs:
   docs:
-    uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.2.0
+    uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.3.0
 ```
 <!-- x-release-please-end -->
 

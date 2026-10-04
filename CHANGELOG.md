@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/Zebradil/docs-kit/compare/v0.2.0...v0.3.0) (2026-10-04)
+
+
+### Features
+
+* kit-owned landing layout with flow panel and components ([#28](https://github.com/Zebradil/docs-kit/issues/28)) ([10d7510](https://github.com/Zebradil/docs-kit/commit/10d7510537b59ce61eee33ebcadd7016eddaf5d5))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @astrojs/starlight to v0.42.5 ([#29](https://github.com/Zebradil/docs-kit/issues/29)) ([6b95ce2](https://github.com/Zebradil/docs-kit/commit/6b95ce27a21222caef67277d8a336367f020c8fd))
+
 ## [0.2.0](https://github.com/Zebradil/docs-kit/compare/v0.1.0...v0.2.0) (2026-09-29)
 
 
