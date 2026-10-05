@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/Zebradil/docs-kit/compare/v0.3.0...v0.4.0) (2026-10-05)
+
+
+### Features
+
+* cascade landing panel and sieve theme ([#32](https://github.com/Zebradil/docs-kit/issues/32)) ([5d51aee](https://github.com/Zebradil/docs-kit/commit/5d51aeed3bf9366ac564f6f7e05bbabead9d798e))
+
 ## [0.3.0](https://github.com/Zebradil/docs-kit/compare/v0.2.0...v0.3.0) (2026-10-04)
 
 
