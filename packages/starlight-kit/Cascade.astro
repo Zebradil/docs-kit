@@ -1,0 +1,208 @@
+---
+// The cascade panel: one request falling through ordered tiers of backends, one tab per scenario.
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+import site from 'virtual:docs-kit/site';
+
+const escape = (text: string) =>
+  text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const inline = (text: string) => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+const cascade = site.cascade;
+const glyph = { hit: '●', miss: '×', down: '○', idle: '·' };
+const word = { hit: 'hit', miss: 'miss', down: 'down', idle: 'not asked' };
+const state = (scenario, id) => scenario.states[id] ?? { state: 'idle' };
+---
+
+<section class="kit-cascade" aria-labelledby="kit-cascade-title">
+  <div class="kit-cascade-head">
+    <h2 id="kit-cascade-title">{cascade.title ?? 'How a request falls through'}</h2>
+    {cascade.request && <code>{cascade.request}</code>}
+  </div>
+  {
+    cascade.hub && (
+      <div class="kit-cascade-hub">
+        <span class="kit-cascade-hub-name">{cascade.hub.name}</span>
+        {cascade.hub.body && <span class="kit-cascade-hub-body" set:html={inline(cascade.hub.body)} />}
+      </div>
+    )
+  }
+  <Tabs>
+    {
+      cascade.scenarios.map((scenario) => (
+        <TabItem label={scenario.label}>
+          <ol class="kit-cascade-tiers">
+            {cascade.tiers.map((tier) => (
+              <li class="kit-cascade-tier">
+                <div class="kit-cascade-tier-name">
+                  {tier.label && <span>{tier.label}</span>}
+                  <strong>{tier.name}</strong>
+                </div>
+                <ul>
+                  {tier.backends.map((b) => {
+                    const s = state(scenario, b.id);
+                    return (
+                      <li class="kit-cascade-backend" data-state={s.state}>
+                        <code>{b.name}</code>
+                        <span>
+                          {glyph[s.state]} {word[s.state]}
+                          {s.text && ` · ${s.text}`}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            ))}
+          </ol>
+          {scenario.note && <p class="kit-cascade-note" set:html={inline(scenario.note)} />}
+        </TabItem>
+      ))
+    }
+  </Tabs>
+</section>
+
+<style is:global>
+  .kit-cascade {
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+  .kit-cascade-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+  }
+  .kit-landing .kit-cascade-head h2 {
+    margin: 0;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .kit-cascade-head code {
+    padding: 0;
+    background: none;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+  .kit-cascade-hub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    background-image: radial-gradient(circle, var(--sl-color-gray-5) 1.4px, transparent 1.6px);
+    background-size: 12px 12px;
+  }
+  .kit-cascade-hub-name {
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.625rem;
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+    font-weight: 700;
+  }
+  .kit-cascade-hub-body {
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-gray-2);
+  }
+  /* Starlight's tab strip, inset to line up with the panel's rows. */
+  .kit-cascade starlight-tabs {
+    display: block;
+  }
+  .kit-cascade starlight-tabs .tablist-wrapper {
+    padding: 0.75rem 1.5rem 0;
+  }
+  .kit-cascade [role='tabpanel'] {
+    margin: 0;
+  }
+  .kit-cascade-tiers,
+  .kit-cascade-tier ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .kit-cascade-tier {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    border-bottom: 1px dashed var(--sl-color-hairline-light);
+  }
+  .kit-cascade-tier:last-child {
+    border-bottom: 0;
+  }
+  .kit-cascade-tier-name {
+    flex: 1 1 10rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.375rem 1.5rem;
+  }
+  .kit-cascade-tier-name span {
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  .kit-cascade-tier-name strong {
+    font-size: var(--sl-text-lg);
+    color: var(--sl-color-white);
+  }
+  .kit-cascade-tier ul {
+    flex: 999 1 30rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.75rem;
+    padding: 1.125rem 1.5rem;
+  }
+  .kit-cascade-backend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.875rem;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  .kit-cascade-backend code {
+    padding: 0;
+    background: none;
+    font-size: var(--sl-text-sm);
+    overflow-wrap: anywhere;
+    color: var(--sl-color-gray-3);
+  }
+  .kit-cascade-backend[data-state='hit'] {
+    border: 1.5px solid var(--sl-color-accent);
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-text-accent);
+  }
+  .kit-cascade-backend[data-state='hit'] code {
+    color: var(--sl-color-white);
+  }
+  .kit-cascade-backend[data-state='down'] {
+    border: 1.5px dashed var(--sl-color-orange);
+    color: var(--sl-color-orange-high);
+  }
+  .kit-cascade-backend:is([data-state='down'], [data-state='miss']) code {
+    color: var(--sl-color-gray-2);
+  }
+  .kit-cascade-note {
+    margin: 0;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+    background: var(--sl-color-bg-nav);
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+    color: var(--sl-color-gray-2);
+  }
+</style>

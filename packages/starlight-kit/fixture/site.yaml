@@ -25,6 +25,25 @@ flow:
     - { from: docs-kit, to: Starlight, label: config + theme, arrow: both }
     - { from: Pages, to: docs-kit, label: deploy, arrow: back }
   note: Arrows point the way data moves.
+cascade:
+  request: GET /page
+  hub: { name: docs-kit, body: Picks the first tier that answers. }
+  tiers:
+    - name: local
+      label: tier 1
+      backends:
+        - { id: a, name: "http://a.lan" }
+        - { id: b, name: "https://b.example" }
+    - name: public
+      label: tier 2
+      backends:
+        - { id: c, name: "https://c.example" }
+  scenarios:
+    - label: Local hit
+      states: { a: { state: hit }, b: { state: idle, text: tier already hit } }
+    - label: Fallback
+      note: Tier 1 has no `page`, so the request falls through.
+      states: { a: { state: down, text: probe failed }, b: { state: miss }, c: { state: hit } }
 components:
   intro: What the kit ships.
   items:

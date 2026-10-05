@@ -11,13 +11,26 @@ const check = new Ajv2020({ allErrors: true }).compile(schema);
 
 /** Returns a list of human-readable errors; empty when the site config is valid. */
 export function validateSite(site) {
-  if (check(site)) return [];
+  if (check(site)) return cascadeErrors(site.cascade);
   return check.errors.map((e) => {
     const where = e.instancePath || '(root)';
     if (e.keyword === 'enum') return `${where} must be one of: ${e.params.allowedValues.join(', ')}`;
     if (e.keyword === 'additionalProperties') return `${where} has unknown field '${e.params.additionalProperty}'`;
     return `${where} ${e.message}`;
   });
+}
+
+/** Scenario states must name backends the cascade's tiers declare, each declared once. */
+function cascadeErrors(cascade) {
+  if (!cascade) return [];
+  const ids = cascade.tiers.flatMap((t) => t.backends.map((b) => b.id));
+  const errors = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].map((id) => `/cascade/tiers declares backend '${id}' more than once`);
+  cascade.scenarios.forEach((s, i) => {
+    for (const id of Object.keys(s.states)) {
+      if (!ids.includes(id)) errors.push(`/cascade/scenarios/${i}/states names unknown backend '${id}'`);
+    }
+  });
+  return errors;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

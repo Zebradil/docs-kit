@@ -2,6 +2,7 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { Code, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
 import site from 'virtual:docs-kit/site';
+import Cascade from './Cascade.astro';
 
 const escape = (text: string) =>
   text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -54,6 +55,8 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
         {site.install.map((m) => <TabItem label={m.label}><Code code={m.code} lang="sh" /></TabItem>)}
       </Tabs>
     </section>
+
+    {site.cascade && <Cascade />}
 
     <section>
       <h2>Features</h2>

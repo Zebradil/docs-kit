@@ -37,7 +37,7 @@ jobs:
       - run: npm install --no-package-lock
       - name: Build with each theme
         run: |
-          for theme in default mono porridge; do
+          for theme in default mono porridge sieve; do
             sed -i "s/^theme: .*/theme: $theme/" site.yaml
             npx astro build --outDir "dist-$theme"
           done
@@ -46,7 +46,7 @@ jobs:
         run: |
           cd dist-default
           find . -name '*.html' | while read -r page; do
-            for other in mono porridge; do
+            for other in mono porridge sieve; do
               diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
                    <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-$other/$page")
             done

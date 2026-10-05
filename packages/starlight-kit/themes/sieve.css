@@ -1,0 +1,49 @@
+/* Cool graphite with a signal-green accent and amber for "down"; Schibsted Grotesk over IBM Plex Mono. */
+@import '@fontsource-variable/schibsted-grotesk';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root {
+  --sl-font: 'Schibsted Grotesk Variable', system-ui, sans-serif;
+  --sl-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --kit-font-display: 'Schibsted Grotesk Variable', system-ui, sans-serif;
+
+  --sl-color-white: #eef3f1;
+  --sl-color-gray-1: #d5dedf;
+  --sl-color-gray-2: #aebbbf;
+  --sl-color-gray-3: #7d8d94;
+  --sl-color-gray-4: #4a5a62;
+  --sl-color-gray-5: #263137;
+  --sl-color-gray-6: #151c20;
+  --sl-color-black: #0d1215;
+  --sl-color-accent-low: #12301f;
+  --sl-color-accent: #5fd39a;
+  --sl-color-accent-high: #c4f2d6;
+  --sl-color-orange-low: #3a2a12;
+  --sl-color-orange: #c98a3a;
+  --sl-color-orange-high: #e0a85a;
+}
+
+:root[data-theme='light'] {
+  --sl-color-white: #10181a;
+  --sl-color-gray-1: #222b2c;
+  --sl-color-gray-2: #3a4645;
+  --sl-color-gray-3: #5d6b69;
+  --sl-color-gray-4: #8a9894;
+  --sl-color-gray-5: #b9c4c0;
+  --sl-color-gray-6: #e4e9e5;
+  --sl-color-gray-7: #eef1ee;
+  --sl-color-black: #f4f6f3;
+  --sl-color-accent-low: #cfeedd;
+  --sl-color-accent: #17714a;
+  --sl-color-accent-high: #0b4029;
+  --sl-color-orange-low: #f5e2c4;
+  --sl-color-orange: #b07a2a;
+  --sl-color-orange-high: #6e4a0e;
+}
+
+:is(h1, h2, h3, .site-title, .card .title) {
+  font-family: var(--kit-font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
