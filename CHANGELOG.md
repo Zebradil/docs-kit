@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Zebradil/docs-kit/compare/v0.4.0...v0.5.0) (2026-10-05)
+
+
+### Features
+
+* widen docs content column to 55rem ([23c3eae](https://github.com/Zebradil/docs-kit/commit/23c3eaef52736984630c354d6d2ddf970103613c))
+
 ## [0.4.0](https://github.com/Zebradil/docs-kit/compare/v0.3.0...v0.4.0) (2026-10-05)
 
 
