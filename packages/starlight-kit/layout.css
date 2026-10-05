@@ -1,0 +1,5 @@
+/* Layout tokens shared by every theme; loaded before the theme so a theme can still override them.
+   Starlight's 45rem default squeezes CLI reference tables and code blocks. */
+:root {
+  --sl-content-width: 55rem;
+}

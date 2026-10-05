@@ -27,7 +27,7 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
         logo: site.logo && (site.logo.dark ? { light: site.logo.light, dark: site.logo.dark } : { src: site.logo.light }),
         social: [{ icon: 'github', label: 'GitHub', href: site.repo }],
         editLink: { baseUrl: `${site.repo}/edit/main/docs/` },
-        customCss: [kitPath(`themes/${site.theme ?? 'default'}.css`)],
+        customCss: [kitPath('layout.css'), kitPath(`themes/${site.theme ?? 'default'}.css`)],
         sidebar: [
           { label: 'Getting started', slug: 'getting-started' },
           ...['Guides', 'Concepts', 'Reference'].map((label) => ({
