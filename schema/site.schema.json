@@ -38,7 +38,7 @@
     },
     "theme": {
       "description": "Design theme, one of the CSS token files shipped in packages/starlight-kit/themes/<name>.css. Changes look only, never layout.",
-      "enum": ["default", "mono", "porridge"],
+      "enum": ["default", "mono", "porridge", "sieve"],
       "default": "default"
     },
     "logo": {
@@ -164,6 +164,92 @@
           "description": "One sentence under the rows; renders `inline code`.",
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "cascade": {
+      "description": "Landing panel showing one request falling through ordered tiers of backends, with one tab per scenario. For projects that route or fall back between backends; omit otherwise.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tiers", "scenarios"],
+      "properties": {
+        "title": {
+          "description": "Panel heading. Defaults to 'How a request falls through'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "request": {
+          "description": "The request entering the panel, e.g. 'GET /<hash>.narinfo'; shown as code.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "hub": {
+          "description": "The project's own row between the request and the tiers.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "description": "Usually the project name.", "type": "string", "minLength": 1, "maxLength": 24 },
+            "body": { "description": "What it does with the request, one short sentence.", "type": "string", "minLength": 1, "maxLength": 120 }
+          }
+        },
+        "tiers": {
+          "description": "Tiers in the order a request tries them.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "backends"],
+            "properties": {
+              "name": { "description": "Tier name.", "type": "string", "minLength": 1, "maxLength": 24 },
+              "label": { "description": "Small label above the name, e.g. 'tier 1 · sequential'.", "type": "string", "minLength": 1, "maxLength": 40 },
+              "backends": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "name"],
+                  "properties": {
+                    "id": { "description": "Key that scenarios use to set this backend's state.", "type": "string", "pattern": "^[a-z0-9-]+$" },
+                    "name": { "description": "Shown as code, usually a URL.", "type": "string", "minLength": 1, "maxLength": 48 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "scenarios": {
+          "description": "One tab each. A backend a scenario does not mention is shown as not asked.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "states"],
+            "properties": {
+              "label": { "description": "Tab label, a few words.", "type": "string", "minLength": 1, "maxLength": 24 },
+              "note": { "description": "One or two sentences under the tiers; renders `inline code`.", "type": "string", "minLength": 1 },
+              "states": {
+                "description": "Backend id to its state in this scenario.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["state"],
+                  "properties": {
+                    "state": { "description": "hit: answered; miss: answered without the item; down: skipped as unreachable; idle: not asked.", "enum": ["hit", "miss", "down", "idle"] },
+                    "text": { "description": "Why, a few words.", "type": "string", "minLength": 1, "maxLength": 48 }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

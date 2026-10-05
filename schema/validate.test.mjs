@@ -14,7 +14,7 @@ test('broken site.yaml reports every problem readably', () => {
   assert.deepEqual(validateSite(load('./testdata/broken.yaml')).sort(), [
     "(root) must have required property 'tagline'",
     '/features must NOT have more than 6 items',
-    '/theme must be one of: default, mono, porridge',
+    '/theme must be one of: default, mono, porridge, sieve',
   ]);
 });
 
@@ -34,4 +34,15 @@ test('flow arrows are forward, back or both', () => {
   const site = load('../examples/site.yaml');
   site.flow = { steps: [{ from: 'a', to: 'b', label: 'c', arrow: 'up' }] };
   assert.deepEqual(validateSite(site), ['/flow/steps/0/arrow must be one of: forward, back, both']);
+});
+
+test('cascade scenarios name only declared backends', () => {
+  const site = load('../packages/starlight-kit/fixture/site.yaml');
+  assert.deepEqual(validateSite(site), []);
+  site.cascade.tiers[1].backends.push({ id: 'a', name: 'dup' });
+  site.cascade.scenarios[0].states.z = { state: 'hit' };
+  assert.deepEqual(validateSite(site), [
+    "/cascade/tiers declares backend 'a' more than once",
+    "/cascade/scenarios/0/states names unknown backend 'z'",
+  ]);
 });
