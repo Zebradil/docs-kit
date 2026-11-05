@@ -2,10 +2,7 @@
 // The cascade panel: one request falling through ordered tiers of backends, one tab per scenario.
 import { TabItem, Tabs } from '@astrojs/starlight/components';
 import site from 'virtual:docs-kit/site';
-
-const escape = (text: string) =>
-  text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-const inline = (text: string) => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+import { escape, inline } from './text.mjs';
 
 const cascade = site.cascade;
 const glyph = { hit: '●', miss: '×', down: '○', idle: '·' };

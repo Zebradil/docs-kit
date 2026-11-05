@@ -1,33 +1,41 @@
 ---
+import { readFileSync } from 'node:fs';
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { Code, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
 import site from 'virtual:docs-kit/site';
+import { escape, inline } from './text.mjs';
 import Cascade from './Cascade.astro';
-
-const escape = (text: string) =>
-  text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-// ponytail: only `inline code` is rendered; switch to a Markdown renderer if bodies need links or emphasis.
-const inline = (text: string) => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+import Diff from './Diff.astro';
+import Tree from './Tree.astro';
 
 // The hero's text column is Starlight's: the eyebrow rides in the tagline slot and CSS moves it above the title.
 const lede = `<span class="kit-lede">${inline(site.description ?? site.tagline)}</span>`;
 const eyebrow = site.eyebrow ? `<span class="kit-eyebrow">${escape(site.eyebrow)}</span>` : '';
 
-// The flow panel fills Starlight's hero image slot, which only takes an HTML string.
+// Illustrations are project content, inlined so they can follow the color scheme and animate.
+// Paths are relative to the docs directory, the working directory of a build.
+const svg = (path: string) => readFileSync(path, 'utf8');
+const art = site.art && `<div class="kit-art" aria-hidden="true">${svg(site.art)}</div>`;
+
+// The flow panel fills Starlight's hero image slot, which only takes an HTML string, unless `art` takes it;
+// then the panel opens a section below the hero. With `flow.art` the rows stay for screen readers only.
 const arrows = { forward: '→', back: '←', both: '↔' };
 const node = (name: string) =>
   `<span class="kit-flow-node${name === site.flow?.highlight ? ' kit-flow-node-hl' : ''}">${escape(name)}</span>`;
 const flow =
   site.flow &&
   [
-    `<div class="kit-flow"><p class="kit-flow-title">${escape(site.flow.title ?? 'How it fits')}</p>`,
+    `<div class="kit-flow">`,
+    art ? '' : `<p class="kit-flow-title">${escape(site.flow.title ?? 'How it fits')}</p>`,
+    site.flow.art ? `<div class="kit-flow-art" aria-hidden="true">${svg(site.flow.art)}</div><div class="sr-only">` : '',
     ...site.flow.steps.map(
       (s) =>
         `<div class="kit-flow-row">${node(s.from)}` +
         `<span class="kit-flow-edge" data-arrow="${s.arrow ?? 'forward'}"><span class="kit-flow-label">${escape(s.label)}</span>` +
         `<span class="sr-only">${arrows[s.arrow ?? 'forward']}</span></span>${node(s.to)}</div>`,
     ),
-    site.flow.note ? `<p class="kit-flow-note">${inline(site.flow.note)}</p>` : '',
+    site.flow.art ? '</div>' : '',
+    site.flow.note && !art ? `<p class="kit-flow-note">${inline(site.flow.note)}</p>` : '',
     '</div>',
   ].join('');
 
@@ -38,7 +46,7 @@ const frontmatter = {
   hero: {
     title: escape(site.headline ?? site.name),
     tagline: eyebrow + lede,
-    ...(flow && { image: { html: flow } }),
+    ...((art || flow) && { image: { html: art || flow } }),
     actions: [
       { text: 'Get started', link: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/getting-started/`, icon: 'right-arrow' },
       { text: 'GitHub', link: site.repo, icon: 'github', variant: 'minimal' },
@@ -55,6 +63,22 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
         {site.install.map((m) => <TabItem label={m.label}><Code code={m.code} lang="sh" /></TabItem>)}
       </Tabs>
     </section>
+
+    {site.diff && <Diff />}
+
+    {
+      art && flow && (
+        <section class="kit-flow-section">
+          <div>
+            <h2>{site.flow.title ?? 'How it fits'}</h2>
+            {site.flow.note && <p set:html={inline(site.flow.note)} />}
+          </div>
+          <Fragment set:html={flow} />
+        </section>
+      )
+    }
+
+    {site.tree && <Tree />}
 
     {site.cascade && <Cascade />}
 
@@ -133,14 +157,46 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
     line-height: 1.55;
     color: var(--sl-color-gray-2);
   }
-  :root:has(.kit-flow) .hero > .hero-html {
+  :root:has(.kit-landing) .hero > .hero-html {
     order: 2;
     width: 100%;
   }
   @media (min-width: 50rem) {
-    :root:has(.kit-flow) .hero {
+    :root:has(.kit-landing) .hero:has(> .hero-html) {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 4rem;
+    }
+  }
+
+  /* Illustrations: project SVGs scaled to their column. */
+  .kit-art {
+    display: grid;
+    place-items: center;
+    width: 100%;
+  }
+  .kit-art svg {
+    width: min(100%, 26rem);
+    height: auto;
+  }
+  .kit-flow-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .kit-flow-section {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 2rem 3rem;
+    align-items: center;
+  }
+  .kit-flow-section > div > p {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  @media (max-width: 50rem) {
+    .kit-flow-section {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 

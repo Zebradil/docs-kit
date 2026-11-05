@@ -1,0 +1,139 @@
+---
+// The inheritance tree: one tab per node with an `id`, numbering the nodes it inherits from, root first.
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+import site from 'virtual:docs-kit/site';
+import { escape, inline } from './text.mjs';
+
+const tree = site.tree;
+const chains = [];
+const walk = (node, chain) => {
+  const here = [...chain, node];
+  if (node.id) chains.push(here);
+  node.children?.forEach((child) => walk(child, here));
+};
+walk(tree.root, []);
+
+const render = (node, chain) => {
+  const step = chain.indexOf(node) + 1;
+  const row =
+    `<div class="kit-tree-row"${step ? ` data-step="${step}"` : ''}>` +
+    `<span class="kit-tree-step">${step || ''}</span>` +
+    `<code>${escape(node.name)}</code>` +
+    (node.file ? `<span class="kit-tree-file">${escape(node.file)}</span>` : '') +
+    (node.note ? `<span class="kit-tree-note">${inline(node.note)}</span>` : '') +
+    '</div>';
+  const children = node.children ? `<ul>${node.children.map((c) => render(c, chain)).join('')}</ul>` : '';
+  return `<li>${row}${children}</li>`;
+};
+---
+
+<section class="kit-tree" aria-labelledby="kit-tree-title">
+  <div>
+    <h2 id="kit-tree-title">{tree.title ?? 'How settings inherit'}</h2>
+    {tree.intro && <p set:html={inline(tree.intro)} />}
+  </div>
+  <div class="kit-tree-panel">
+    <Tabs>
+      {
+        chains.map((chain) => (
+          <TabItem label={chain.at(-1).id}>
+            <ul class="kit-tree-list" set:html={render(tree.root, chain)} />
+          </TabItem>
+        ))
+      }
+    </Tabs>
+  </div>
+</section>
+
+<style is:global>
+  .kit-tree {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 2rem 3rem;
+    align-items: start;
+  }
+  @media (max-width: 50rem) {
+    .kit-tree {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .kit-tree > div > p {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-tree-panel {
+    min-width: 0;
+    padding: 0.5rem 1.25rem 1.25rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .kit-tree starlight-tabs {
+    display: block;
+  }
+  .kit-tree-list,
+  .kit-tree-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .kit-tree-list {
+    margin-top: 1rem;
+  }
+  .kit-tree-list ul {
+    margin-left: 0.875rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--sl-color-gray-5);
+  }
+  .kit-tree-list li {
+    margin: 0;
+  }
+  .kit-tree-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.625rem;
+    padding: 0.375rem 0;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+  .kit-tree-row code {
+    padding: 0;
+    background: none;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+  .kit-tree-step {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px dashed var(--sl-color-gray-5);
+    border-radius: 50%;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+  }
+  .kit-tree-file {
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+  }
+  .kit-tree-note {
+    flex-basis: 100%;
+    padding-left: 2.125rem;
+    font-size: var(--sl-text-xs);
+  }
+  .kit-tree-row[data-step] {
+    color: var(--sl-color-gray-2);
+  }
+  .kit-tree-row[data-step] code {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .kit-tree-row[data-step] .kit-tree-step {
+    border: 0;
+    background: var(--sl-color-text-accent);
+    color: var(--sl-color-black);
+    font-weight: 600;
+  }
+</style>
