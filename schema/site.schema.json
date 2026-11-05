@@ -38,7 +38,7 @@
     },
     "theme": {
       "description": "Design theme, one of the CSS token files shipped in packages/starlight-kit/themes/<name>.css. Changes look only, never layout.",
-      "enum": ["default", "mono", "porridge", "sieve"],
+      "enum": ["default", "mono", "porridge", "sieve", "vortex"],
       "default": "default"
     },
     "logo": {

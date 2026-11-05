@@ -14,7 +14,7 @@ test('broken site.yaml reports every problem readably', () => {
   assert.deepEqual(validateSite(load('./testdata/broken.yaml')).sort(), [
     "(root) must have required property 'tagline'",
     '/features must NOT have more than 6 items',
-    '/theme must be one of: default, mono, porridge, sieve',
+    '/theme must be one of: default, mono, porridge, sieve, vortex',
   ]);
 });
 
