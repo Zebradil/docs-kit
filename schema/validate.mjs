@@ -11,7 +11,7 @@ const check = new Ajv2020({ allErrors: true }).compile(schema);
 
 /** Returns a list of human-readable errors; empty when the site config is valid. */
 export function validateSite(site) {
-  if (check(site)) return cascadeErrors(site.cascade);
+  if (check(site)) return [...cascadeErrors(site.cascade), ...treeErrors(site.tree)];
   return check.errors.map((e) => {
     const where = e.instancePath || '(root)';
     if (e.keyword === 'enum') return `${where} must be one of: ${e.params.allowedValues.join(', ')}`;
@@ -31,6 +31,19 @@ function cascadeErrors(cascade) {
     }
   });
   return errors;
+}
+
+/** A tree needs at least one node with an `id`, since each one is a tab, and the ids must be unique. */
+function treeErrors(tree) {
+  if (!tree) return [];
+  const ids = [];
+  const walk = (node) => {
+    if (node.id) ids.push(node.id);
+    node.children?.forEach(walk);
+  };
+  walk(tree.root);
+  if (!ids.length) return ['/tree has no node with an id'];
+  return [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].map((id) => `/tree declares id '${id}' more than once`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

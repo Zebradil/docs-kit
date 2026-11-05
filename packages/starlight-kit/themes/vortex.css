@@ -1,0 +1,45 @@
+/* Plum-tinted neutrals with a coral accent; Outfit SemiBold headings over the system sans. */
+@import '@fontsource/outfit/600.css';
+
+:root {
+  --kit-font-display: 'Outfit', system-ui, sans-serif;
+
+  --sl-color-white: #f7f4fc;
+  --sl-color-gray-1: #e9e4f2;
+  --sl-color-gray-2: #c9c1d8;
+  --sl-color-gray-3: #a197b5;
+  --sl-color-gray-4: #6a5f80;
+  --sl-color-gray-5: #382c4d;
+  --sl-color-gray-6: #1c1030;
+  --sl-color-black: #120a1f;
+  --sl-color-accent-low: #4a1a22;
+  --sl-color-accent: #ff5a4e;
+  --sl-color-accent-high: #ffc9c4;
+}
+
+:root[data-theme='light'] {
+  --sl-color-white: #1c1030;
+  --sl-color-gray-1: #2a1f3d;
+  --sl-color-gray-2: #3d3250;
+  --sl-color-gray-3: #5c5270;
+  --sl-color-gray-4: #8c839c;
+  --sl-color-gray-5: #cbc4d6;
+  --sl-color-gray-6: #ece8f2;
+  --sl-color-gray-7: #f6f4f9;
+  --sl-color-black: #ffffff;
+  --sl-color-accent-low: #ffe1dd;
+  --sl-color-accent: #c22f25; /* 4.5:1 or more as text on every light background, white and tints alike */
+  --sl-color-accent-high: #7a1a14;
+}
+
+:is(h1, h2, h3, .site-title, .card .title) {
+  font-family: var(--kit-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* The wordmark: white on dark, plum on light, as in the logo lockups. */
+.site-title {
+  color: var(--sl-color-white);
+  letter-spacing: -0.035em;
+}

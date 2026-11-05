@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
@@ -16,6 +16,14 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
   // Hosting is GitHub Pages per repo: https://github.com/<owner>/<repo> is served at https://<owner>.github.io/<repo>.
   const [owner, repo] = new URL(site.repo).pathname.split('/').filter(Boolean);
 
+  // Starlight links public/favicon.svg itself; these are linked only when the project ships them.
+  const icons = [
+    ['favicon.ico', { rel: 'icon', sizes: '32x32' }],
+    ['apple-touch-icon.png', { rel: 'apple-touch-icon' }],
+  ]
+    .filter(([file]) => existsSync(`public/${file}`))
+    .map(([file, attrs]) => ({ tag: 'link', attrs: { ...attrs, href: `/${repo}/${file}` } }));
+
   return defineConfig({
     site: `https://${owner.toLowerCase()}.github.io`,
     base: `/${repo}`,
@@ -25,6 +33,7 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
         title: site.name,
         description: site.tagline,
         logo: site.logo && (site.logo.dark ? { light: site.logo.light, dark: site.logo.dark } : { src: site.logo.light }),
+        head: icons,
         social: [{ icon: 'github', label: 'GitHub', href: site.repo }],
         editLink: { baseUrl: `${site.repo}/edit/main/docs/` },
         customCss: [kitPath('layout.css'), kitPath(`themes/${site.theme ?? 'default'}.css`)],
