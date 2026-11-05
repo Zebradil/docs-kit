@@ -10,8 +10,19 @@ const summary = (files) =>
   files.length
     ? `${files.length} ${files.length === 1 ? 'file' : 'files'} changed, +${count(files, '+')} −${count(files, '-')}`
     : 'No changes';
-// Expressive Code marks the +/- lines and highlights the rest in the file's own language.
-const meta = (path) => `lang="${path.split('.').pop().replace(/^yml$/, 'yaml')}" title="${path}"`;
+// Expressive Code's own `diff` language leaves a diff with hunk headers unmarked, so the kit turns the
+// +/- column into ins/del line markers, marks the hunk headers, and highlights the file in its own language.
+const file = ({ path, diff }) => {
+  const marks = { ins: [], del: [], mark: [] };
+  const lines = diff.replace(/\n$/, '').split('\n').map((line, i) => {
+    if (line.startsWith('@@')) return marks.mark.push(i + 1) && line;
+    if (line[0] === '+') marks.ins.push(i + 1);
+    if (line[0] === '-') marks.del.push(i + 1);
+    return line.slice(1);
+  });
+  const meta = Object.entries(marks).filter(([, n]) => n.length).map(([k, n]) => `${k}={${n}}`);
+  return { code: lines.join('\n'), lang: path.split('.').pop().replace(/^yml$/, 'yaml'), meta: [`title="${path}"`, ...meta].join(' ') };
+};
 ---
 
 <section class="kit-diff" aria-labelledby="kit-diff-title">
@@ -27,7 +38,7 @@ const meta = (path) => `lang="${path.split('.').pop().replace(/^yml$/, 'yaml')}"
             {diff.change.label ?? 'The change'} <span>{summary(diff.change.files)}</span>
           </p>
           {diff.change.files.map((f) => (
-            <Code code={f.diff} lang="diff" meta={meta(f.path)} />
+            <Code {...file(f)} />
           ))}
         </div>
       )
@@ -40,7 +51,7 @@ const meta = (path) => `lang="${path.split('.').pop().replace(/^yml$/, 'yaml')}"
             <TabItem label={t.label}>
               <p class="kit-diff-summary">{summary(t.files)}</p>
               {t.files.map((f) => (
-                <Code code={f.diff} lang="diff" meta={meta(f.path)} />
+                <Code {...file(f)} />
               ))}
             </TabItem>
           ))
