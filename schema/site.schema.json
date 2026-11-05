@@ -42,7 +42,7 @@
       "default": "default"
     },
     "logo": {
-      "description": "Project logo shown next to the site title. Paths are relative to the docs directory and start with './', e.g. './src/assets/logo.svg'. For a favicon, put 'favicon.svg' in the docs directory's public/ folder.",
+      "description": "Project logo shown next to the site title. Paths are relative to the docs directory and start with './', e.g. './src/assets/logo.svg'. For a favicon, put 'favicon.svg' in the docs directory's public/ folder; 'favicon.ico' and 'apple-touch-icon.png' there are linked too.",
       "type": "object",
       "additionalProperties": false,
       "required": ["light"],
