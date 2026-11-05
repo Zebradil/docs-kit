@@ -14,7 +14,7 @@ test('broken site.yaml reports every problem readably', () => {
   assert.deepEqual(validateSite(load('./testdata/broken.yaml')).sort(), [
     "(root) must have required property 'tagline'",
     '/features must NOT have more than 6 items',
-    '/theme must be one of: default, mono, porridge, sieve',
+    '/theme must be one of: default, mono, porridge, sieve, vortex',
   ]);
 });
 
@@ -45,4 +45,18 @@ test('cascade scenarios name only declared backends', () => {
     "/cascade/tiers declares backend 'a' more than once",
     "/cascade/scenarios/0/states names unknown backend 'z'",
   ]);
+});
+
+test('a tree needs a node with an id, and ids are unique', () => {
+  const site = load('../examples/site.yaml');
+  site.tree = { root: { name: 'envs/', children: [{ name: 'a/' }] } };
+  assert.deepEqual(validateSite(site), ['/tree has no node with an id']);
+  site.tree.root.children = [{ name: 'a/', id: 'x' }, { name: 'b/', id: 'x' }];
+  assert.deepEqual(validateSite(site), ["/tree declares id 'x' more than once"]);
+});
+
+test('illustrations are SVG files relative to the docs directory', () => {
+  const site = load('../examples/site.yaml');
+  site.art = 'src/assets/hero.png';
+  assert.deepEqual(validateSite(site), ['/art must match pattern "^\\./.+\\.svg$"']);
 });

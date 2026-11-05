@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="fixture-art">
+  <style>
+    .fixture-art circle { fill: none; stroke: var(--sl-color-accent); stroke-width: 6; }
+    .fixture-art .spin { transform-box: view-box; transform-origin: 50px 50px; animation: fixture-spin 2s ease-out both; }
+    @keyframes fixture-spin { from { transform: rotate(-180deg); } }
+    @media (prefers-reduced-motion: reduce) { .fixture-art .spin { animation: none; } }
+  </style>
+  <circle class="spin" cx="50" cy="50" r="36" stroke-dasharray="150 76" />
+  <circle cx="50" cy="50" r="18" />
+</svg>

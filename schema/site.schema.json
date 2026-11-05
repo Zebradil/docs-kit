@@ -38,11 +38,11 @@
     },
     "theme": {
       "description": "Design theme, one of the CSS token files shipped in packages/starlight-kit/themes/<name>.css. Changes look only, never layout.",
-      "enum": ["default", "mono", "porridge", "sieve"],
+      "enum": ["default", "mono", "porridge", "sieve", "vortex"],
       "default": "default"
     },
     "logo": {
-      "description": "Project logo shown next to the site title. Paths are relative to the docs directory and start with './', e.g. './src/assets/logo.svg'. For a favicon, put 'favicon.svg' in the docs directory's public/ folder.",
+      "description": "Project logo shown next to the site title. Paths are relative to the docs directory and start with './', e.g. './src/assets/logo.svg'. For a favicon, put 'favicon.svg' in the docs directory's public/ folder; 'favicon.ico' and 'apple-touch-icon.png' there are linked too.",
       "type": "object",
       "additionalProperties": false,
       "required": ["light"],
@@ -58,6 +58,11 @@
           "pattern": "^\\./"
         }
       }
+    },
+    "art": {
+      "description": "Illustration in the hero, beside the title. When set, the flow panel moves to a section below the hero. Path relative to the docs directory, starting with './'. The SVG is inlined, so its own <style> can animate it and follow the color scheme with :root[data-theme='light'] selectors; it is hidden from screen readers.",
+      "type": "string",
+      "pattern": "^\\./.+\\.svg$"
     },
     "repo": {
       "description": "Repository URL, used for the GitHub link and 'edit this page' links.",
@@ -164,6 +169,132 @@
           "description": "One sentence under the rows; renders `inline code`.",
           "type": "string",
           "minLength": 1
+        },
+        "art": {
+          "description": "Illustration drawn in place of the rows, which stay for screen readers. Path relative to the docs directory, starting with './'. The SVG is inlined, so its own <style> can animate it and follow the color scheme with :root[data-theme='light'] selectors; it is hidden from screen readers.",
+          "type": "string",
+          "pattern": "^\\./.+\\.svg$"
+        }
+      }
+    },
+    "diff": {
+      "description": "Landing section showing a change and what it changes in each target, as diffs: one tab per target. For projects whose output is reviewed as a diff; omit otherwise.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tabs"],
+      "properties": {
+        "title": {
+          "description": "Section heading. Defaults to 'What a change looks like'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "intro": {
+          "description": "One or two sentences under the heading; renders `inline code`.",
+          "type": "string",
+          "minLength": 1
+        },
+        "change": {
+          "description": "The edit a user makes, shown beside the tabs.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["files"],
+          "properties": {
+            "label": {
+              "description": "Label above the files. Defaults to 'The change'.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "files": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "diff"],
+                "properties": {
+                  "path": {
+                    "description": "File path, shown as the title; its extension picks the syntax highlighting.",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "diff": {
+                    "description": "Unified diff lines: '+' added, '-' removed, ' ' context, '@@' hunk headers. No file headers.",
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "minItems": 1
+            }
+          }
+        },
+        "label": {
+          "description": "Label above the tabs. Defaults to 'What it changes'.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "tabs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "files"],
+            "properties": {
+              "label": {
+                "description": "Target name, e.g. an environment.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "files": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "diff"],
+                  "properties": {
+                    "path": {
+                      "description": "File path, shown as the title; its extension picks the syntax highlighting.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "diff": {
+                      "description": "Unified diff lines: '+' added, '-' removed, ' ' context, '@@' hunk headers. No file headers.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "description": "Changed files; empty shows \"No changes\"."
+              }
+            }
+          }
+        }
+      }
+    },
+    "tree": {
+      "description": "Landing section showing an inheritance tree: one tab per node with an `id`, numbering the nodes it inherits from. For projects with layered configuration; omit otherwise.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root"],
+      "properties": {
+        "title": {
+          "description": "Section heading. Defaults to 'How settings inherit'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "intro": {
+          "description": "One or two sentences beside the tree; renders `inline code`.",
+          "type": "string",
+          "minLength": 1
+        },
+        "root": {
+          "$ref": "#/$defs/treeNode"
         }
       }
     },
@@ -333,6 +464,47 @@
               "type": "string",
               "minLength": 1
             }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "treeNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "description": "Node name, e.g. a directory; shown as code.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "file": {
+          "description": "File the node contributes, shown beside the name.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "note": {
+          "description": "A few words on what this level sets; renders `inline code`.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "id": {
+          "description": "Makes the node a tab: the label of a leaf that inherits from every node above it.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        },
+        "children": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/$defs/treeNode"
           }
         }
       }

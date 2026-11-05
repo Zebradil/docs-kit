@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           cache: npm
@@ -27,7 +27,7 @@ jobs:
         working-directory: packages/starlight-kit/fixture
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           cache: npm
@@ -37,7 +37,7 @@ jobs:
       - run: npm install --no-package-lock
       - name: Build with each theme
         run: |
-          for theme in default mono porridge sieve; do
+          for theme in default mono porridge sieve vortex; do
             sed -i "s/^theme: .*/theme: $theme/" site.yaml
             npx astro build --outDir "dist-$theme"
           done
@@ -46,7 +46,7 @@ jobs:
         run: |
           cd dist-default
           find . -name '*.html' | while read -r page; do
-            for other in mono porridge sieve; do
+            for other in mono porridge sieve vortex; do
               diff <(sed -E 's|/_astro/[^"]+\.css||g' "$page") \
                    <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-$other/$page")
             done
@@ -58,7 +58,7 @@ jobs:
       CLAUDE: npx --yes @anthropic-ai/claude-code@2.1.283
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
       - run: $CLAUDE plugin validate --strict .

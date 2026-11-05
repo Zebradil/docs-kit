@@ -1,0 +1,134 @@
+---
+// The diff panel: a change on one side, the files it changes in each target on the other, one tab per target.
+import { Code, TabItem, Tabs } from '@astrojs/starlight/components';
+import site from 'virtual:docs-kit/site';
+import { inline } from './text.mjs';
+
+const diff = site.diff;
+const count = (files, sign) => files.flatMap((f) => f.diff.split('\n')).filter((l) => l.startsWith(sign)).length;
+const summary = (files) =>
+  files.length
+    ? `${files.length} ${files.length === 1 ? 'file' : 'files'} changed, +${count(files, '+')} −${count(files, '-')}`
+    : 'No changes';
+// Expressive Code's own `diff` language leaves a diff with hunk headers unmarked, so the kit turns the
+// +/- column into ins/del line markers, marks the hunk headers, and highlights the file in its own language.
+const file = ({ path, diff }) => {
+  const marks = { ins: [], del: [], mark: [] };
+  const lines = diff.replace(/\n$/, '').split('\n').map((line, i) => {
+    if (line.startsWith('@@')) return marks.mark.push(i + 1) && line;
+    if (line[0] === '+') marks.ins.push(i + 1);
+    if (line[0] === '-') marks.del.push(i + 1);
+    return line.slice(1);
+  });
+  const meta = Object.entries(marks).filter(([, n]) => n.length).map(([k, n]) => `${k}={${n}}`);
+  return { code: lines.join('\n'), lang: path.split('.').pop().replace(/^yml$/, 'yaml'), meta: [`title="${path}"`, ...meta].join(' ') };
+};
+---
+
+<section class="kit-diff" aria-labelledby="kit-diff-title">
+  <div class="kit-diff-head">
+    <h2 id="kit-diff-title">{diff.title ?? 'What a change looks like'}</h2>
+    {diff.intro && <p set:html={inline(diff.intro)} />}
+  </div>
+  <div class="kit-diff-body">
+    {
+      diff.change && (
+        <div class="kit-diff-change">
+          <p class="kit-diff-label">
+            {diff.change.label ?? 'The change'} <span>{summary(diff.change.files)}</span>
+          </p>
+          {diff.change.files.map((f) => (
+            <Code {...file(f)} />
+          ))}
+        </div>
+      )
+    }
+    <div class="kit-diff-result">
+      <p class="kit-diff-label">{diff.label ?? 'What it changes'}</p>
+      <Tabs>
+        {
+          diff.tabs.map((t) => (
+            <TabItem label={t.label}>
+              <p class="kit-diff-summary">{summary(t.files)}</p>
+              {t.files.map((f) => (
+                <Code {...file(f)} />
+              ))}
+            </TabItem>
+          ))
+        }
+      </Tabs>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .kit-landing .kit-diff-head {
+    max-width: 44rem;
+  }
+  .kit-diff-head p {
+    margin: 0;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-diff-body {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  @media (max-width: 60rem) {
+    .kit-diff-body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .kit-diff-change,
+  .kit-diff-result {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 1rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .kit-diff-result {
+    border-color: var(--sl-color-accent);
+  }
+  .kit-diff-label {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin: 0;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .kit-diff-label span,
+  .kit-diff-summary {
+    margin: 0;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--sl-color-gray-2);
+  }
+  .kit-diff starlight-tabs {
+    display: block;
+  }
+  .kit-diff [role='tabpanel'] {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .kit-diff [role='tabpanel'][hidden] {
+    display: none;
+  }
+  .kit-diff .expressive-code {
+    margin: 0;
+  }
+</style>
