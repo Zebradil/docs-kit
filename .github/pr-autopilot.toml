@@ -1,0 +1,42 @@
+enabled = true
+
+# Documentation only — the engine never reads this table (ADR 0012). It records what onboarding
+# concluded about the repository, and why the policy below looks the way it does.
+#
+# release_mode: release-please cuts vX.Y.Z tags; consumers pin those tags in docs/package.json and
+#   in `uses:` of the reusable docs workflow, and the release PR is merged by hand. A merged bump
+#   reaches consumers only through a release a human approves.
+# deploys_from_main: pages.yml deploys the fixture demo site to GitHub Pages on every push
+#   (PAGES_ENABLED=true), and plugin users pull main on `plugin update`. The plugin is skills,
+#   schema and refgen; only schema/validate.mjs uses npm dependencies (ajv, yaml). Low stakes,
+#   so the policy is not tightened for it.
+# test_confidence: `test` runs schema validation through ajv and yaml and help2md golden tests;
+#   `fixture` installs the kit's current dependencies fresh and builds every optional field with
+#   every theme, then diffs the themes. An Astro or Starlight API break fails the build.
+#   Blind spots: a rendering change in Astro or Starlight passes; actions that run only on push
+#   (upload-pages-artifact, deploy-pages, octo-sts/action, release-please-action) are exercised
+#   by the post-merge run, before any release.
+[risk]
+release_mode      = "release-please"
+deploys_from_main = true
+test_confidence   = "high"
+criticality       = "low"
+
+# The only thing the engine consults. Values are verdicts; an update class that is absent here
+# escalates. GitHub Actions majors stay escalated: several actions above never run on a pull request.
+[policy]
+patch    = "merge"
+minor    = "merge"
+major    = "escalate"
+digest   = "merge"
+pin      = "merge"
+lockfile = "merge"
+
+[limits]
+max_merges    = 10   # merges per sweep
+max_repairs   = 3    # agent dispatches per sweep
+attempt_cap   = 2    # repair attempts per pull request, then escalate for good
+lease_minutes = 30   # how long one sweep's claim on a pull request lasts; also the repair agent's time limit
+
+[repair]
+strategy = "bot-branch"   # bot-branch | side-pr
