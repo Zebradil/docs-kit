@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/Zebradil/docs-kit/compare/v0.5.0...v0.6.0) (2026-11-05)
+
+
+### Features
+
+* vortex theme, hero art, diff and tree landing sections ([#42](https://github.com/Zebradil/docs-kit/issues/42)) ([78d18d8](https://github.com/Zebradil/docs-kit/commit/78d18d8ca5f8c735717b9ccbaef6131400feab42))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @astrojs/starlight to v0.42.8 ([#38](https://github.com/Zebradil/docs-kit/issues/38)) ([99091af](https://github.com/Zebradil/docs-kit/commit/99091af3a8dfa51c14290c513954931b71a957e7))
+* **deps:** update dependency astro to v7.4.4 ([#37](https://github.com/Zebradil/docs-kit/issues/37)) ([bfa3c56](https://github.com/Zebradil/docs-kit/commit/bfa3c566a1485db1789a6a9ab7cec0917b545265))
+
 ## [0.5.0](https://github.com/Zebradil/docs-kit/compare/v0.4.0...v0.5.0) (2026-10-05)
 
 
