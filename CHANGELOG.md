@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/Zebradil/docs-kit/compare/v0.6.0...v0.6.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency astro to v7.4.5 ([#45](https://github.com/Zebradil/docs-kit/issues/45)) ([5285598](https://github.com/Zebradil/docs-kit/commit/5285598358aefac8eb7277adfa72bb91dd8faace))
+
 ## [0.6.0](https://github.com/Zebradil/docs-kit/compare/v0.5.0...v0.6.0) (2026-11-05)
 
 
