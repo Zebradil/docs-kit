@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/Zebradil/docs-kit/compare/v0.7.0...v0.8.0) (2026-11-09)
+
+
+### Features
+
+* load an analytics script from site.yaml ([#52](https://github.com/Zebradil/docs-kit/issues/52)) ([0e4f201](https://github.com/Zebradil/docs-kit/commit/0e4f20185b571a59a0f6d9c51cbbaca1d6f6b1c7))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @astrojs/starlight to v0.42.10 ([#51](https://github.com/Zebradil/docs-kit/issues/51)) ([7e6ed25](https://github.com/Zebradil/docs-kit/commit/7e6ed25d49820b924479cd2f6cf26e5ef3b41d53))
+
 ## [0.7.0](https://github.com/Zebradil/docs-kit/compare/v0.6.0...v0.7.0) (2026-11-09)
 
 
