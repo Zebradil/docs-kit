@@ -13,8 +13,10 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
   const errors = validateSite(site);
   if (errors.length) throw new Error(`${sitePath} is invalid:\n  ${errors.join('\n  ')}`);
 
-  // Hosting is GitHub Pages per repo: https://github.com/<owner>/<repo> is served at https://<owner>.github.io/<repo>.
+  // Hosting is GitHub Pages per repo: https://github.com/<owner>/<repo> is served at https://<owner>.github.io/<repo>,
+  // or at the root of its custom domain.
   const [owner, repo] = new URL(site.repo).pathname.split('/').filter(Boolean);
+  const base = site.domain ? '' : `/${repo}`;
 
   // Starlight links public/favicon.svg itself; these are linked only when the project ships them.
   const icons = [
@@ -22,11 +24,11 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
     ['apple-touch-icon.png', { rel: 'apple-touch-icon' }],
   ]
     .filter(([file]) => existsSync(`public/${file}`))
-    .map(([file, attrs]) => ({ tag: 'link', attrs: { ...attrs, href: `/${repo}/${file}` } }));
+    .map(([file, attrs]) => ({ tag: 'link', attrs: { ...attrs, href: `${base}/${file}` } }));
 
   return defineConfig({
-    site: `https://${owner.toLowerCase()}.github.io`,
-    base: `/${repo}`,
+    site: site.domain ? `https://${site.domain}` : `https://${owner.toLowerCase()}.github.io`,
+    base: base || '/',
     vite: { plugins: [siteModule(site)] },
     integrations: [
       starlight({

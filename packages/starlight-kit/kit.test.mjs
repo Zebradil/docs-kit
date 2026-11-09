@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import docsKit from './index.mjs';
@@ -16,6 +18,15 @@ test('serves the site at <owner>.github.io/<repo>', () => {
   const config = docsKit({ site: path('../../examples/site.yaml') });
   assert.equal(config.site, 'https://zebradil.github.io');
   assert.equal(config.base, '/kasha');
+});
+
+test('serves the site at the root of a custom domain', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'docs-kit-'));
+  const site = join(dir, 'site.yaml');
+  writeFileSync(site, `${readFileSync(path('../../examples/site.yaml'), 'utf8')}\ndomain: kasha.dev\n`);
+  const config = docsKit({ site });
+  assert.equal(config.site, 'https://kasha.dev');
+  assert.equal(config.base, '/');
 });
 
 test('rejects an invalid site.yaml with readable errors', () => {
