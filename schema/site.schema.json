@@ -74,6 +74,25 @@
       "type": "string",
       "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
     },
+    "analytics": {
+      "description": "Web analytics script loaded, deferred, on every page. Fits any tracker configured through data attributes, such as Umami, GoatCounter, Plausible or the Cloudflare Web Analytics beacon.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script"],
+      "properties": {
+        "script": {
+          "description": "URL of the tracker script.",
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "attributes": {
+          "description": "Attributes of the script tag, such as data-website-id for Umami. Only data-* attributes, so the tag cannot carry inline event handlers.",
+          "type": "object",
+          "propertyNames": { "pattern": "^data-[a-z0-9-]+$" },
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
     "install": {
       "description": "Install methods in order of preference. The first one is shown on the landing hero with a copy button; all are listed below it.",
       "type": "array",

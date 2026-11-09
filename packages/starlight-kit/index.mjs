@@ -35,7 +35,12 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
         title: site.name,
         description: site.tagline,
         logo: site.logo && (site.logo.dark ? { light: site.logo.light, dark: site.logo.dark } : { src: site.logo.light }),
-        head: icons,
+        head: [
+          ...icons,
+          ...(site.analytics
+            ? [{ tag: 'script', attrs: { src: site.analytics.script, defer: true, ...site.analytics.attributes } }]
+            : []),
+        ],
         social: [{ icon: 'github', label: 'GitHub', href: site.repo }],
         editLink: { baseUrl: `${site.repo}/edit/main/docs/` },
         customCss: [kitPath('layout.css'), kitPath(`themes/${site.theme ?? 'default'}.css`)],

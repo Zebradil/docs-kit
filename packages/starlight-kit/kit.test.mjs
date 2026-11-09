@@ -29,6 +29,17 @@ test('serves the site at the root of a custom domain', () => {
   assert.equal(config.base, '/');
 });
 
+test('accepts analytics with data-* attributes only', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'docs-kit-'));
+  const site = join(dir, 'site.yaml');
+  const withAttribute = (attr) =>
+    `${readFileSync(path('../../examples/site.yaml'), 'utf8')}\nanalytics:\n  script: https://stats.example.dev/app.js\n  attributes:\n    ${attr}\n`;
+  writeFileSync(site, withAttribute('data-website-id: abc'));
+  assert.doesNotThrow(() => docsKit({ site }));
+  writeFileSync(site, withAttribute('onload: alert(1)'));
+  assert.throws(() => docsKit({ site }), /\/analytics\/attributes/);
+});
+
 test('rejects an invalid site.yaml with readable errors', () => {
   assert.throws(() => docsKit({ site: path('../../schema/testdata/broken.yaml') }), /must be one of: default, mono, porridge/);
 });
