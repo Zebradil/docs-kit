@@ -62,6 +62,15 @@ export { collections } from '@zebradil/starlight-kit/content';
 
 Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`; with `domain:` set, it is served at `https://<domain>/`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
 
+To count visitors, set `analytics:` in `site.yaml`; the script is loaded on every page with the given `data-*` attributes:
+
+```yaml
+analytics:
+  script: https://stats.example.dev/app.js
+  attributes:
+    data-website-id: 00000000-0000-0000-0000-000000000000
+```
+
 ### Publishing with GitHub Actions
 
 [`.github/workflows/docs.yml`](.github/workflows/docs.yml) is a reusable workflow. A consuming project calls it from `.github/workflows/docs.yml`, pinned to the same tag as the kit in `docs/package.json`:
