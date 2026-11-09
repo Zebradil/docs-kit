@@ -60,7 +60,7 @@ export default docsKit({ site: 'site.yaml' });
 export { collections } from '@zebradil/starlight-kit/content';
 ```
 
-Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
+Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`; with `domain:` set, it is served at `https://<domain>/`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
 
 ### Publishing with GitHub Actions
 

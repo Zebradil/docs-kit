@@ -69,6 +69,11 @@
       "type": "string",
       "pattern": "^https://"
     },
+    "domain": {
+      "description": "Custom domain the GitHub Pages site is served at, such as 'example.dev'. The site is then built for the domain root instead of https://<owner>.github.io/<repo>/.",
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"
+    },
     "install": {
       "description": "Install methods in order of preference. The first one is shown on the landing hero with a copy button; all are listed below it.",
       "type": "array",
