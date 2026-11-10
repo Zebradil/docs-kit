@@ -51,6 +51,11 @@ jobs:
                    <(sed -E 's|/_astro/[^"]+\.css||g' "../dist-$other/$page")
             done
           done
+      - name: Pages are served as Markdown for agents
+        run: |
+          cd dist-default
+          grep -F '](https://zebradil.github.io/docs-kit/guides/configure.md)' llms.txt
+          for file in guides/configure.md llms-full.txt; do grep -Fx '# Configure the fixture' "$file"; done
 
   plugin:
     runs-on: ubuntu-latest
