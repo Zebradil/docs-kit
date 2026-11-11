@@ -15,7 +15,7 @@ jobs:
   docs:
     uses: ./.github/workflows/docs.yml
     with:
-      directory: packages/starlight-kit/fixture
+      directory: packages/docs-kit/fixture
       # Runs the Nix install step on every pull request, so an install-nix-action bump is tested
       # before consumers that set nix: true receive it in a release.
       nix: true

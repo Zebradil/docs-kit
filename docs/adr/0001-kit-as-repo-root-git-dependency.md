@@ -1,6 +1,6 @@
 # 1. Ship starlight-kit as the repo-root package, installed as a git dependency
 
-Status: accepted, 2026-09-27
+Status: superseded by [ADR 0007](0007-publish-to-npm.md), 2026-11-11 (accepted 2026-09-27)
 
 ## Context
 

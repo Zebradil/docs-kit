@@ -1,18 +1,24 @@
 {
-  "name": "@zebradil/starlight-kit",
-  "private": true,
+  "name": "@zebradil/docs-kit",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zebradil/docs-kit.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
-    ".": "./packages/starlight-kit/index.mjs",
-    "./content": "./packages/starlight-kit/content.mjs"
+    ".": "./packages/docs-kit/index.mjs",
+    "./content": "./packages/docs-kit/content.mjs"
   },
   "bin": {
     "help2md": "refgen/help2md.mjs"
   },
   "files": [
-    "packages/starlight-kit",
-    "!packages/starlight-kit/fixture",
+    "packages/docs-kit",
+    "!packages/docs-kit/fixture",
     "schema/site.schema.json",
     "schema/validate.mjs",
     "refgen/help2md.mjs"

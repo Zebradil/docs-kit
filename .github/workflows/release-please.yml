@@ -1,7 +1,7 @@
 name: release-please
 
-# Merging the release PR tags vX.Y.Z, the ref consumers pin in docs/package.json and in `uses:` of
-# the reusable docs workflow.
+# Merging the release PR tags vX.Y.Z, the ref consumers pin in `uses:` of the reusable docs workflow,
+# and publishes @zebradil/docs-kit X.Y.Z to npm, the version they pin in docs/package.json.
 #
 # The release PR is opened with an octo-sts App token (policy `release-please` in Zebradil/.github):
 # this repository disallows GITHUB_TOKEN from creating pull requests, and a GITHUB_TOKEN-created PR
@@ -30,5 +30,32 @@ jobs:
           identity: release-please
 
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
         with:
           token: ${{ steps.sts.outputs.token }}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
+  # npm trusted publishing (OIDC, no token): the package's trusted publisher on npmjs.com names this
+  # file, release-please.yml. A failed run is safe to rerun: a version already on npm is skipped.
+  publish:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+      - name: Publish unless this version is on npm
+        run: |
+          spec=$(node -p 'const p = require("./package.json"); p.name + "@" + p.version')
+          if npm view "$spec" version >/dev/null 2>&1; then
+            echo "$spec is already on npm"
+          else
+            npm publish
+          fi

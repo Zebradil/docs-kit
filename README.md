@@ -39,28 +39,28 @@ node schema/validate.mjs path/to/docs/site.yaml
 
 ## Using the kit
 
-The repository root is the npm package `@zebradil/starlight-kit`, installed as a git dependency pinned to a tag ([ADR 0001](docs/adr/0001-kit-as-repo-root-git-dependency.md)). A consuming project's `docs/` needs three files besides `site.yaml` and its pages under `src/content/docs/`:
+The repository root is the npm package [`@zebradil/docs-kit`](https://www.npmjs.com/package/@zebradil/docs-kit), published from each release tag ([ADR 0007](docs/adr/0007-publish-to-npm.md)). A consuming project's `docs/` needs three files besides `site.yaml` and its pages under `src/content/docs/`:
 
 <!-- x-release-please-start-version -->
 ```jsonc
 // package.json
-{ "private": true, "type": "module", "dependencies": { "@zebradil/starlight-kit": "github:Zebradil/docs-kit#v0.9.0" } }
+{ "private": true, "type": "module", "dependencies": { "@zebradil/docs-kit": "0.9.0" } }
 ```
 <!-- x-release-please-end -->
 
 ```js
 // astro.config.mjs
-import docsKit from '@zebradil/starlight-kit';
+import docsKit from '@zebradil/docs-kit';
 
 export default docsKit({ site: 'site.yaml' });
 ```
 
 ```js
 // src/content.config.mjs
-export { collections } from '@zebradil/starlight-kit/content';
+export { collections } from '@zebradil/docs-kit/content';
 ```
 
-Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`; with `domain:` set, it is served at `https://<domain>/`. [`packages/starlight-kit/fixture/`](packages/starlight-kit/fixture/) is a complete example.
+Build with `npm ci && npx astro build` from `docs/`. The site is served at `https://<owner>.github.io/<repo>/`, derived from `repo:` in `site.yaml`; with `domain:` set, it is served at `https://<domain>/`. [`packages/docs-kit/fixture/`](packages/docs-kit/fixture/) is a complete example.
 
 To count visitors, set `analytics:` in `site.yaml`; the script is loaded on every page with the given `data-*` attributes:
 
@@ -112,7 +112,7 @@ One manual step per repository, by its owner: enable Pages with GitHub Actions a
 gh api --method POST repos/<owner>/<repo>/pages -f build_type=workflow
 ```
 
-Until then the deploy job fails. This repository builds [the fixture](packages/starlight-kit/fixture/) through the workflow ([`pages.yml`](.github/workflows/pages.yml)) and deploys it only when the repository variable `PAGES_ENABLED` is `true`; set it after enabling Pages (`gh variable set PAGES_ENABLED --body true`).
+Until then the deploy job fails. This repository builds [the fixture](packages/docs-kit/fixture/) through the workflow ([`pages.yml`](.github/workflows/pages.yml)) and deploys it only when the repository variable `PAGES_ENABLED` is `true`; set it after enabling Pages (`gh variable set PAGES_ENABLED --body true`).
 
 Terms used across the kit are defined in [`CONTEXT.md`](CONTEXT.md).
 

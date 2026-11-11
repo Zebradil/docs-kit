@@ -37,7 +37,7 @@ test('flow arrows are forward, back or both', () => {
 });
 
 test('cascade scenarios name only declared backends', () => {
-  const site = load('../packages/starlight-kit/fixture/site.yaml');
+  const site = load('../packages/docs-kit/fixture/site.yaml');
   assert.deepEqual(validateSite(site), []);
   site.cascade.tiers[1].backends.push({ id: 'a', name: 'dup' });
   site.cascade.scenarios[0].states.z = { state: 'hit' };
