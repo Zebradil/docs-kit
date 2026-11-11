@@ -55,7 +55,11 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
       {
         name: 'docs-kit',
         hooks: {
-          'astro:config:setup': ({ injectRoute }) => injectRoute({ pattern: '/', entrypoint: kitPath('Landing.astro') }),
+          'astro:config:setup': ({ injectRoute }) => {
+            injectRoute({ pattern: '/', entrypoint: kitPath('Landing.astro') });
+            injectRoute({ pattern: '/[...slug].md', entrypoint: kitPath('page.md.mjs') });
+            injectRoute({ pattern: '/[name].txt', entrypoint: kitPath('llms.txt.mjs') });
+          },
         },
       },
     ],

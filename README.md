@@ -71,6 +71,8 @@ analytics:
     data-website-id: 00000000-0000-0000-0000-000000000000
 ```
 
+For coding agents and LLMs, every site serves [`/llms.txt`](https://llmstxt.org), an index of all pages, and `/llms-full.txt`, all pages in one file. Each page's Markdown source is also served at its URL with `.md` appended (`/guides/configure/` → `/guides/configure.md`), with relative links made absolute. GitHub Pages cannot vary a response on the `Accept` header, so the `.md` URLs are the only Markdown route.
+
 ### Publishing with GitHub Actions
 
 [`.github/workflows/docs.yml`](.github/workflows/docs.yml) is a reusable workflow. A consuming project calls it from `.github/workflows/docs.yml`, pinned to the same tag as the kit in `docs/package.json`:
