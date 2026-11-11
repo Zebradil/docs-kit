@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/Zebradil/docs-kit/compare/v0.9.0...v0.10.0) (2026-11-11)
+
+
+### Features
+
+* publish to npm as @zebradil/docs-kit ([#57](https://github.com/Zebradil/docs-kit/issues/57)) ([a251fbe](https://github.com/Zebradil/docs-kit/commit/a251fbe0272e63b7efdc34031ba4524c23203528))
+
 ## [0.9.0](https://github.com/Zebradil/docs-kit/compare/v0.8.0...v0.9.0) (2026-11-11)
 
 
