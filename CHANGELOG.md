@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/Zebradil/docs-kit/compare/v0.8.0...v0.9.0) (2026-11-11)
+
+
+### Features
+
+* serve llms.txt and per-page Markdown for agents ([#54](https://github.com/Zebradil/docs-kit/issues/54)) ([48a6784](https://github.com/Zebradil/docs-kit/commit/48a67843a4d7f8581f0bc07e016357aa4699393d))
+
 ## [0.8.0](https://github.com/Zebradil/docs-kit/compare/v0.7.0...v0.8.0) (2026-11-09)
 
 
