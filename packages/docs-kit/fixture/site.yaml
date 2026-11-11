@@ -82,7 +82,7 @@ tree:
 components:
   intro: What the kit ships.
   items:
-    - { name: "@zebradil/starlight-kit", body: Astro config and landing page. }
+    - { name: "@zebradil/docs-kit", body: Astro config and landing page. }
     - { name: help2md, body: CLI reference from `--help`. }
     - { name: docs.yml, body: Reusable build and deploy workflow. }
 links:
