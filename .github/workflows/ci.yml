@@ -61,7 +61,7 @@ jobs:
         run: |
           git fetch --depth=1 --no-tags origin '+refs/tags/v*:refs/tags/v*'
           npx --no-install docs-kit-versions --default-branch main
-          jq -e 'length > 1 and .[0] == {name: "main", path: ""}' dist/versions.json
+          jq -e 'length > 1 and .[0] == {name: "main", path: ""} and .[1].latest' dist/versions.json
           for path in $(jq -r '.[1:][].path' dist/versions.json); do
             grep -F '<meta name="robots" content="noindex"' "dist/${path}guides/configure/index.html"
             grep -F "https://zebradil.github.io/docs-kit/${path}guides/configure.md" "dist/${path}llms.txt"

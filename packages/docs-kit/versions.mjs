@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Builds the docs of past releases next to the default branch's site in dist/: the newest patch tag (vX.Y.Z) of each
-// of the last `versions.keep` minor versions, at dist/vX.Y/, and the list of all of them in dist/versions.json.
+// minor version that `versions:` in site.yaml selects, at dist/vX.Y/, and the list of all of them in dist/versions.json.
 // Each release's pages, assets and public files come from its tag; site.yaml, dependencies and the kit come from the
 // working tree, so every version is built with the current kit and theme.
 // Usage, from the docs directory after `astro build`: docs-kit-versions [--default-branch main]
@@ -11,7 +11,10 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { parse } from 'yaml';
 
-/** Release tags grouped by minor version, newest first, each with its newest patch. Pre-releases are skipped. */
+/**
+ * Release tags grouped by minor version, newest first, each with its newest patch and its release line: the major
+ * version, or `0.<minor>` below 1.0, where semver lets every minor break. Pre-releases are skipped.
+ */
 export function minorVersions(tags) {
   const newest = new Map();
   for (const tag of tags) {
@@ -23,7 +26,17 @@ export function minorVersions(tags) {
   }
   return [...newest.values()]
     .sort((a, b) => b.major - a.major || b.minor - a.minor)
-    .map(({ name, tag }) => ({ name, tag }));
+    .map(({ name, tag, major, minor }) => ({ name, tag, line: major ? `${major}` : `0.${minor}` }));
+}
+
+/**
+ * The minor versions to publish, newest first: the `minors` newest, the newest of each of the `majors` newest release
+ * lines, and the pinned ones.
+ */
+export function selectVersions(candidates, { majors = 3, minors = 3, pin = [] } = {}) {
+  const lines = [...new Set(candidates.map((c) => c.line))].slice(0, majors);
+  const newestOfLine = lines.map((line) => candidates.find((c) => c.line === line));
+  return candidates.filter((c, i) => i < minors || newestOfLine.includes(c) || pin.includes(c.name));
 }
 
 // Copied from a tag into the build: content replaces the working tree's, the others are laid over it so that files
@@ -35,15 +48,17 @@ function main() {
   const { values } = parseArgs({ options: { 'default-branch': { type: 'string', default: 'main' } } });
   const site = parse(readFileSync('site.yaml', 'utf8'));
   if (!site.versions) throw new Error('site.yaml has no `versions:`; nothing to build');
-  const keep = site.versions.keep ?? 5;
 
   const git = (...args) => execFileSync('git', args, { encoding: 'utf8' });
   // `<tag>:./<path>` resolves the path against the working directory, wherever the docs directory is in the repo.
   const has = (tag, path) => spawnSync('git', ['cat-file', '-e', `${tag}:./${path}`]).status === 0;
   const candidates = minorVersions(git('tag', '--list', 'v*').split('\n')).filter(({ tag }) => has(tag, fromTag[0]));
+  for (const name of (site.versions.pin ?? []).filter((n) => !candidates.some((c) => c.name === n))) {
+    console.log(`::warning::Pinned docs version ${name} has no vX.Y.Z tag with ${fromTag[0]}`);
+  }
 
   const built = [];
-  for (const { name, tag } of candidates.slice(0, keep)) {
+  for (const { name, tag } of selectVersions(candidates, site.versions)) {
     const out = resolve('dist', name);
     // Inside the docs directory, so the build finds node_modules by walking up; a symlink confuses Astro's paths.
     mkdirSync('.astro', { recursive: true });
@@ -74,7 +89,11 @@ function main() {
     }
   }
 
-  const versions = [{ name: values['default-branch'], path: '' }, ...built.map((name) => ({ name, path: `${name}/` }))];
+  const latest = candidates[0]?.name;
+  const versions = [
+    { name: values['default-branch'], path: '' },
+    ...built.map((name) => ({ name, path: `${name}/`, ...(name === latest && { latest: true }) })),
+  ];
   mkdirSync('dist', { recursive: true });
   writeFileSync('dist/versions.json', `${JSON.stringify(versions, null, 2)}\n`);
   console.log(`Wrote dist/versions.json: ${versions.map((v) => v.name).join(', ')}`);

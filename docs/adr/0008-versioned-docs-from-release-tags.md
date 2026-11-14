@@ -17,18 +17,19 @@ Options considered:
 
 (c'), opt-in with `versions:` in `site.yaml`.
 
-- The default branch stays at the site root, so existing links keep working. The newest patch tag `vX.Y.Z` of each of the last `versions.keep` minor versions is served at `<root>/vX.Y/`.
+- The default branch stays at the site root, so existing links keep working. Each selected minor version is served at `<root>/vX.Y/` from its newest patch tag `vX.Y.Z`; older patches add nothing a reader of that minor needs.
+- Selection follows semver: the `minors` newest minor versions, the newest minor of each of the `majors` newest major versions, and any `pin`ned ones (a long-term support line). Below 1.0 each minor counts as a major, since semver lets it break.
 - `docs-kit-versions` (a kit binary) builds each one after the main build: a copy of the docs directory with `src/content/docs` replaced from the tag and `src/assets` and `public/` laid over from it, built with the current lock file and `site.yaml`, with `DOCS_KIT_VERSION=vX.Y`. The copy lives under `.astro/` in the docs directory, so the build finds `node_modules` by walking up; a symlinked `node_modules` breaks Astro's module paths.
 - Refgen output is committed (the docs workflow fails a pull request when it is stale), so each tag carries its own CLI reference and no old binary is built.
 - The tags are the storage: no branch, no extra permission. Fixing a release's docs after the fact means a patch release.
-- `dist/versions.json` lists the default branch first, then the versions that built. A header switcher reads it at runtime, so a release's docs list releases made after it. Release pages carry a banner linking to the root, `noindex`, and no edit link (a tag cannot be edited on GitHub).
+- `dist/versions.json` lists the default branch first, then the versions that built. A header switcher reads it at runtime, so a release's docs list releases made after it, and labels the newest release. Release pages carry a banner linking to the root, `noindex`, and no edit link (a tag cannot be edited on GitHub).
 - A release that no longer builds with the current kit is skipped with a workflow warning; it must not block the deploy of the default branch.
 
 ## Consequences
 
 - Kit or Starlight changes can break old content: frontmatter, MDX imports of renamed components. The kit's CI builds the fixture from the kit's own release tags to catch this; consumers see a warning and the version drops out of the switcher.
 - Absolute internal links in old pages (`/<repo>/guides/x/`) point to the default branch's page, not the release's. Relative links stay within the version.
-- Each deploy builds `keep + 1` sites.
+- Each deploy builds one site per selected version, plus the default branch's.
 - Versions are built only when deploying, so a pull request does not show which releases a kit bump breaks.
 - Only `vX.Y.Z` tags count; pre-releases and prefixed tags (`name-vX.Y.Z`) are skipped.
 - A tag created by a workflow's `GITHUB_TOKEN` triggers no other workflow, so a new release appears with the next deploy unless the release job runs the docs workflow itself.

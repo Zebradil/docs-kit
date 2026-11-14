@@ -92,4 +92,4 @@ reference:
   cli: { bin: clapdemo, build: "test -x refgen/testdata/bin/clapdemo", path: refgen/testdata/bin/clapdemo }
 
 # The kit's release tags carry the fixture, so its site shows the fixture as each kit release left it.
-versions: { keep: 3 }
+versions: { minors: 2, majors: 3 }

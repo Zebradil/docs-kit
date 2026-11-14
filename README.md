@@ -74,10 +74,13 @@ analytics:
 To publish the docs of past releases next to the current ones, set `versions:` in `site.yaml`:
 
 ```yaml
-versions: { keep: 5 }
+versions:
+  minors: 3     # the 3 newest minor versions
+  majors: 3     # the newest minor of each of the 3 newest majors; below 1.0 each minor counts as a major
+  pin: [v1.4]   # always, e.g. a long-term support line
 ```
 
-The default branch stays at the site root. The newest patch tag `vX.Y.Z` of each of the last `keep` minor versions is rebuilt with the current kit at `/vX.Y/`, from the tag's `src/content/docs`, `src/assets` and `public/`, with `site.yaml` from the default branch. A version switcher appears in the header, and release pages carry a banner linking to the current docs and are kept out of search engines. Links between pages stay within a version only when they are relative. The workflow builds the versions only when it deploys; a release that no longer builds is skipped with a warning. To try it locally, run `npx astro build && npx --no-install docs-kit-versions` from `docs/` and serve `dist/`. See [ADR 0008](docs/adr/0008-versioned-docs-from-release-tags.md).
+The default branch stays at the site root. Each selected minor version is rebuilt from its newest patch tag `vX.Y.Z` with the current kit at `/vX.Y/`, from the tag's `src/content/docs`, `src/assets` and `public/`, with `site.yaml` from the default branch. A version switcher appears in the header and marks the newest release, and release pages carry a banner linking to the current docs and are kept out of search engines. Links between pages stay within a version only when they are relative. The workflow builds the versions only when it deploys; a release that no longer builds is skipped with a warning. To try it locally, run `npx astro build && npx --no-install docs-kit-versions` from `docs/` and serve `dist/`. See [ADR 0008](docs/adr/0008-versioned-docs-from-release-tags.md).
 
 For coding agents and LLMs, every site serves [`/llms.txt`](https://llmstxt.org), an index of all pages, and `/llms-full.txt`, all pages in one file. Each page's Markdown source is also served at its URL with `.md` appended (`/guides/configure/` → `/guides/configure.md`), with relative links made absolute. GitHub Pages cannot vary a response on the `Accept` header, so the `.md` URLs are the only Markdown route.
 
