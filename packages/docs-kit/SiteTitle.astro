@@ -1,0 +1,45 @@
+---
+import Default from '@astrojs/starlight/components/SiteTitle.astro';
+import Select from '@astrojs/starlight/components/Select.astro';
+import { root, version } from 'virtual:docs-kit/site';
+---
+
+<Default />
+{/* Filled from versions.json at runtime, so the docs of a past release list releases made after it. */}
+<kit-versions data-root={root} data-version={version} hidden>
+  <Select icon="open-book" label="Docs version" options={[]} width="auto" />
+</kit-versions>
+
+<script>
+  customElements.define(
+    'kit-versions',
+    class extends HTMLElement {
+      async connectedCallback() {
+        const { root, version } = this.dataset as { root: string; version: string };
+        const select = this.querySelector('select')!;
+        const response = await fetch(`${root}versions.json`).catch(() => undefined);
+        if (!response?.ok) return;
+        const versions: { name: string; path: string; latest?: true }[] = await response.json();
+        const current = version && `${version}/`;
+        // The same page in another version: the URL path below the current version's base.
+        const page = location.pathname.slice(root.length + current.length);
+        for (const { name, path, latest } of versions) {
+          select.add(new Option(latest ? `${name} (latest release)` : name, path, false, path === current));
+        }
+        select.addEventListener('change', async () => {
+          const target = root + select.value;
+          const exists = await fetch(target + page, { method: 'HEAD' }).then((r) => r.ok, () => false);
+          location.href = exists ? target + page : target;
+        });
+        this.hidden = false;
+      }
+    },
+  );
+</script>
+
+<style>
+  kit-versions:not([hidden]) {
+    display: flex;
+    align-items: center;
+  }
+</style>

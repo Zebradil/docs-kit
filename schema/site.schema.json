@@ -461,6 +461,32 @@
         }
       }
     },
+    "versions": {
+      "description": "Publishes the docs of past releases next to the default branch's, which stay at the site root. Each selected minor version is served at <site>/vX.Y/ from its newest patch tag (vX.Y.Z), with a version switcher in the header that marks the newest release. A release's pages, src/assets and public/ come from its tag; site.yaml and the kit come from the default branch, so every version gets the current theme. Pre-releases and tags without the docs directory's src/content/docs are skipped.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minors": {
+          "description": "Publishes the newest this many minor versions.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 3
+        },
+        "majors": {
+          "description": "Publishes the newest minor version of each of the newest this many major versions. Below 1.0 every minor version counts as a major one, since semver lets it break.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 3
+        },
+        "pin": {
+          "description": "Minor versions published whatever 'minors' and 'majors' select, e.g. a long-term support line.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^v\\d+\\.\\d+$" }
+        }
+      }
+    },
     "reference": {
       "description": "How refgen produces the generated pages under reference/. Omit when the project has no CLI.",
       "type": "object",

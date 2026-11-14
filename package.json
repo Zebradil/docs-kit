@@ -14,7 +14,8 @@
     "./content": "./packages/docs-kit/content.mjs"
   },
   "bin": {
-    "help2md": "refgen/help2md.mjs"
+    "help2md": "refgen/help2md.mjs",
+    "docs-kit-versions": "packages/docs-kit/versions.mjs"
   },
   "files": [
     "packages/docs-kit",

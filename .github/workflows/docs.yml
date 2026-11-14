@@ -26,6 +26,7 @@ jobs:
         working-directory: ${{ inputs.directory }}
     env:
       REFERENCE: src/content/docs/reference/cli
+      DEPLOY: ${{ inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -35,12 +36,12 @@ jobs:
           cache-dependency-path: ${{ inputs.directory }}/package-lock.json
       - run: npm ci
 
-      - name: Read reference.cli from site.yaml
+      - name: Read reference.cli and versions from site.yaml
         id: site
         run: >-
-          node -e 'const {parse} = require("yaml");
-          const cli = parse(require("fs").readFileSync("site.yaml", "utf8"))?.reference?.cli ?? {};
-          console.log("cli=" + JSON.stringify(cli))' >> "$GITHUB_OUTPUT"
+          node -e 'const site = require("yaml").parse(require("fs").readFileSync("site.yaml", "utf8"));
+          console.log("cli=" + JSON.stringify(site?.reference?.cli ?? {}));
+          console.log("versions=" + JSON.stringify(site?.versions ?? null))' >> "$GITHUB_OUTPUT"
 
       - name: Install Nix
         if: inputs.nix
@@ -81,8 +82,17 @@ jobs:
       - name: Build site
         run: npx --no-install astro build
 
+      # Only when deploying: a release that no longer builds is skipped with a warning, so a pull request would pass anyway.
+      - name: Build released versions
+        if: env.DEPLOY == 'true' && fromJSON(steps.site.outputs.versions)
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch --depth=1 --no-tags origin '+refs/tags/v*:refs/tags/v*'
+          npx --no-install docs-kit-versions --default-branch "$DEFAULT_BRANCH"
+
       - name: Upload site
-        if: inputs.deploy && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        if: env.DEPLOY == 'true'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ${{ inputs.directory }}/dist
