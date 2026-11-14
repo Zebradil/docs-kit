@@ -44,7 +44,7 @@ The repository root is the npm package [`@zebradil/docs-kit`](https://www.npmjs.
 <!-- x-release-please-start-version -->
 ```jsonc
 // package.json
-{ "private": true, "type": "module", "dependencies": { "@zebradil/docs-kit": "0.10.0" } }
+{ "private": true, "type": "module", "dependencies": { "@zebradil/docs-kit": "0.10.1" } }
 ```
 <!-- x-release-please-end -->
 
@@ -86,7 +86,7 @@ on:
 permissions: { contents: read, pages: write, id-token: write }
 jobs:
   docs:
-    uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.10.0
+    uses: Zebradil/docs-kit/.github/workflows/docs.yml@v0.10.1
 ```
 <!-- x-release-please-end -->
 
