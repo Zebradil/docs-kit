@@ -90,3 +90,6 @@ links:
 reference:
   # The replay binary needs no build; this command only proves build runs from the repository root.
   cli: { bin: clapdemo, build: "test -x refgen/testdata/bin/clapdemo", path: refgen/testdata/bin/clapdemo }
+
+# The kit's release tags carry the fixture, so its site shows the fixture as each kit release left it.
+versions: { keep: 3 }

@@ -71,6 +71,14 @@ analytics:
     data-website-id: 00000000-0000-0000-0000-000000000000
 ```
 
+To publish the docs of past releases next to the current ones, set `versions:` in `site.yaml`:
+
+```yaml
+versions: { keep: 5 }
+```
+
+The default branch stays at the site root. The newest patch tag `vX.Y.Z` of each of the last `keep` minor versions is rebuilt with the current kit at `/vX.Y/`, from the tag's `src/content/docs`, `src/assets` and `public/`, with `site.yaml` from the default branch. A version switcher appears in the header, and release pages carry a banner linking to the current docs and are kept out of search engines. Links between pages stay within a version only when they are relative. The workflow builds the versions only when it deploys; a release that no longer builds is skipped with a warning. To try it locally, run `npx astro build && npx --no-install docs-kit-versions` from `docs/` and serve `dist/`. See [ADR 0008](docs/adr/0008-versioned-docs-from-release-tags.md).
+
 For coding agents and LLMs, every site serves [`/llms.txt`](https://llmstxt.org), an index of all pages, and `/llms-full.txt`, all pages in one file. Each page's Markdown source is also served at its URL with `.md` appended (`/guides/configure/` → `/guides/configure.md`), with relative links made absolute. GitHub Pages cannot vary a response on the `Accept` header, so the `.md` URLs are the only Markdown route.
 
 ### Publishing with GitHub Actions
@@ -94,7 +102,7 @@ Keep `uses:` on its own indented line: Renovate's github-actions manager finds r
 
 The caller must grant `pages: write` and `id-token: write`: a called workflow can only narrow the caller's token permissions, never widen them, and the deploy job needs both.
 
-On every run it installs `docs/` with `npm ci`, builds the CLI with `reference.cli.build` (run from the repository root) when set, regenerates the CLI reference with `help2md` into `docs/src/content/docs/reference/cli`, and builds the site with `npx astro build` (which validates `site.yaml`). On a pull request it fails if the regenerated reference differs from the committed one and prints the diff. On a push to the default branch it deploys `docs/dist` to GitHub Pages.
+On every run it installs `docs/` with `npm ci`, builds the CLI with `reference.cli.build` (run from the repository root) when set, regenerates the CLI reference with `help2md` into `docs/src/content/docs/reference/cli`, and builds the site with `npx astro build` (which validates `site.yaml`). On a pull request it fails if the regenerated reference differs from the committed one and prints the diff. On a push to the default branch it builds the release versions when `versions:` is set and deploys `docs/dist` to GitHub Pages. A tag pushed with a workflow's `GITHUB_TOKEN` triggers no other workflow, so a new release shows up with the next deploy; to publish it at once, run the docs workflow on the default branch after the tag exists, for example from the release job.
 
 Inputs, all optional:
 

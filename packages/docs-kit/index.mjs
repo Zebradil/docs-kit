@@ -16,7 +16,11 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
   // Hosting is GitHub Pages per repo: https://github.com/<owner>/<repo> is served at https://<owner>.github.io/<repo>,
   // or at the root of its custom domain.
   const [owner, repo] = new URL(site.repo).pathname.split('/').filter(Boolean);
-  const base = site.domain ? '' : `/${repo}`;
+  const root = site.domain ? '' : `/${repo}`;
+  // Set by docs-kit-versions when it builds a release's docs into <root>/<version>/.
+  const version = process.env.DOCS_KIT_VERSION ?? '';
+  if (!/^[\w.-]*$/.test(version)) throw new Error(`DOCS_KIT_VERSION '${version}' is not a path segment`);
+  const base = version ? `${root}/${version}` : root;
 
   // Starlight links public/favicon.svg itself; these are linked only when the project ships them.
   const icons = [
@@ -25,11 +29,13 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
   ]
     .filter(([file]) => existsSync(`public/${file}`))
     .map(([file, attrs]) => ({ tag: 'link', attrs: { ...attrs, href: `${base}/${file}` } }));
+  // A release's docs stay readable but out of search results, which should point at the current docs.
+  const noindex = version ? [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex' } }] : [];
 
   return defineConfig({
     site: site.domain ? `https://${site.domain}` : `https://${owner.toLowerCase()}.github.io`,
     base: base || '/',
-    vite: { plugins: [siteModule(site)] },
+    vite: { plugins: [siteModule(site, { version, root: `${root}/` })] },
     integrations: [
       starlight({
         title: site.name,
@@ -37,12 +43,15 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
         logo: site.logo && (site.logo.dark ? { light: site.logo.light, dark: site.logo.dark } : { src: site.logo.light }),
         head: [
           ...icons,
+          ...noindex,
           ...(site.analytics
             ? [{ tag: 'script', attrs: { src: site.analytics.script, defer: true, ...site.analytics.attributes } }]
             : []),
         ],
         social: [{ icon: 'github', label: 'GitHub', href: site.repo }],
-        editLink: { baseUrl: `${site.repo}/edit/main/docs/` },
+        // A release's pages live in a tag, which GitHub cannot edit.
+        editLink: version ? {} : { baseUrl: `${site.repo}/edit/main/docs/` },
+        components: site.versions ? { SiteTitle: kitPath('SiteTitle.astro'), Banner: kitPath('Banner.astro') } : {},
         customCss: [kitPath('layout.css'), kitPath(`themes/${site.theme ?? 'default'}.css`)],
         sidebar: [
           { label: 'Getting started', slug: 'getting-started' },
@@ -66,12 +75,20 @@ export default function docsKit({ site: sitePath = 'site.yaml' } = {}) {
   });
 }
 
-/** Exposes the validated site.yaml to Landing.astro as `virtual:docs-kit/site`. */
-function siteModule(site) {
+/**
+ * Exposes the validated site.yaml to the kit's components as `virtual:docs-kit/site`, with the docs version being built
+ * ('' for the default branch) and the site root URL path, where versions.json lives.
+ */
+function siteModule(site, { version, root }) {
   const id = 'virtual:docs-kit/site';
+  const code = [
+    `export default ${JSON.stringify(site)};`,
+    `export const version = ${JSON.stringify(version)};`,
+    `export const root = ${JSON.stringify(root)};`,
+  ].join('\n');
   return {
     name: 'docs-kit-site',
     resolveId: (source) => (source === id ? `\0${id}` : undefined),
-    load: (resolved) => (resolved === `\0${id}` ? `export default ${JSON.stringify(site)};` : undefined),
+    load: (resolved) => (resolved === `\0${id}` ? code : undefined),
   };
 }

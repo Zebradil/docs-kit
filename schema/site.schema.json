@@ -461,6 +461,20 @@
         }
       }
     },
+    "versions": {
+      "description": "Publishes the docs of past releases next to the default branch's, which stay at the site root: the newest patch tag (vX.Y.Z) of each of the last 'keep' minor versions is served at <site>/vX.Y/, with a version switcher in the header. A release's pages, src/assets and public/ come from its tag; site.yaml and the kit come from the default branch, so every version gets the current theme. Tags without the docs directory's src/content/docs are skipped.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "keep": {
+          "description": "How many minor versions to publish, newest first.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5
+        }
+      }
+    },
     "reference": {
       "description": "How refgen produces the generated pages under reference/. Omit when the project has no CLI.",
       "type": "object",

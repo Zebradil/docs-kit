@@ -56,6 +56,16 @@ jobs:
           cd dist-default
           grep -F '](https://zebradil.github.io/docs-kit/guides/configure.md)' llms.txt
           for file in guides/configure.md llms-full.txt; do grep -Fx '# Configure the fixture' "$file"; done
+      # The kit's own release tags carry the fixture from v0.10 on, so at least one release must build with this kit.
+      - name: Released versions build with the current kit
+        run: |
+          git fetch --depth=1 --no-tags origin '+refs/tags/v*:refs/tags/v*'
+          npx --no-install docs-kit-versions --default-branch main
+          jq -e 'length > 1 and .[0] == {name: "main", path: ""}' dist/versions.json
+          for path in $(jq -r '.[1:][].path' dist/versions.json); do
+            grep -F '<meta name="robots" content="noindex"' "dist/${path}guides/configure/index.html"
+            grep -F "https://zebradil.github.io/docs-kit/${path}guides/configure.md" "dist/${path}llms.txt"
+          done
 
   plugin:
     runs-on: ubuntu-latest

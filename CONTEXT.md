@@ -9,4 +9,5 @@ Shared kit that gives small OSS projects the same docs structure with swappable 
 - **Layout**: page structure shared by all consuming projects: landing page, sidebar, page chrome. Lives in the kit; a consuming project never overrides it.
 - **Theme**: a CSS file of design tokens (colors, fonts, spacing, radii) selected by `theme:` in `site.yaml`. Changes look only; anything structural is a layout change.
 - **Refgen**: the step that generates `reference/` pages from code (CLI `--help` today). Reference pages are generated only, never hand-written, and CI fails when they are stale.
+- **Docs version**: a release's docs, `vX.Y`, rebuilt from the content of its newest patch tag with the current kit and served at `/vX.Y/`. The default branch's docs stay at the site root.
 - **Gap report**: output of the `docs-audit` skill: each place a consuming project falls short of the content contract, with severity, evidence, and an action sized for one `docs-write` run.
