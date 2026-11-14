@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.0](https://github.com/Zebradil/docs-kit/compare/v0.10.0...v0.11.0) (2026-11-14)
+
+
+### Features
+
+* publish docs of past releases next to the default branch ([#64](https://github.com/Zebradil/docs-kit/issues/64)) ([e4543c8](https://github.com/Zebradil/docs-kit/commit/e4543c85a0b3dcb44fc426ef78ed2683f45fb93d))
+
+
+### Bug Fixes
+
+* **deps:** update dependency astro to v7.4.10 ([#62](https://github.com/Zebradil/docs-kit/issues/62)) ([365b8cd](https://github.com/Zebradil/docs-kit/commit/365b8cdd46feae9b9de553ef05f831b2b994a078))
+* **deps:** update dependency astro to v7.4.11 ([#63](https://github.com/Zebradil/docs-kit/issues/63)) ([56bf335](https://github.com/Zebradil/docs-kit/commit/56bf33574ecf9bcaade330377af450fe5535102a))
+* **deps:** update dependency astro to v7.4.8 ([#60](https://github.com/Zebradil/docs-kit/issues/60)) ([8641aca](https://github.com/Zebradil/docs-kit/commit/8641acaf73a15077058ade3b0e970a2a8ecb1e88))
+
 ## [0.10.0](https://github.com/Zebradil/docs-kit/compare/v0.9.0...v0.10.0) (2026-11-11)
 
 
