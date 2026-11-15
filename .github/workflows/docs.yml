@@ -87,8 +87,11 @@ jobs:
         if: env.DEPLOY == 'true' && fromJSON(steps.site.outputs.versions)
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        # A fetch whose refspec matches no tag exits 1 without a message, so a repository before its first release skips it.
         run: |
-          git fetch --depth=1 --no-tags origin '+refs/tags/v*:refs/tags/v*'
+          if [ -n "$(git ls-remote --tags origin 'refs/tags/v*')" ]; then
+            git fetch --depth=1 --no-tags origin '+refs/tags/v*:refs/tags/v*'
+          fi
           npx --no-install docs-kit-versions --default-branch "$DEFAULT_BRANCH"
 
       - name: Upload site
