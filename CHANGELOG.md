@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.1](https://github.com/Zebradil/docs-kit/compare/v0.11.0...v0.11.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* build versioned docs in a repository with no release tags ([#65](https://github.com/Zebradil/docs-kit/issues/65)) ([e935e98](https://github.com/Zebradil/docs-kit/commit/e935e98a41afe35bb1bc7ef38246a664b4e1390e))
+* space the version switcher and mark main as the development version ([#67](https://github.com/Zebradil/docs-kit/issues/67)) ([c101501](https://github.com/Zebradil/docs-kit/commit/c101501cc2cafa89179633b2351bd664742ced94))
+
 ## [0.11.0](https://github.com/Zebradil/docs-kit/compare/v0.10.0...v0.11.0) (2026-11-14)
 
 
