@@ -15,6 +15,10 @@ on:
         description: Deploy to GitHub Pages on pushes to the default branch. Needs Pages enabled with source "GitHub Actions".
         type: boolean
         default: true
+      prebuild:
+        description: Shell command run from the repository root before the CLI build, for files the site needs that are generated rather than committed, such as a demo under the docs directory's public/.
+        type: string
+        default: ""
 
 jobs:
   build:
@@ -46,6 +50,13 @@ jobs:
       - name: Install Nix
         if: inputs.nix
         uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31.11.5
+      - name: Prebuild
+        if: inputs.prebuild
+        working-directory: .
+        env:
+          PREBUILD: ${{ inputs.prebuild }}
+        run: eval "$PREBUILD"
+
       - name: Build CLI
         if: fromJSON(steps.site.outputs.cli).build
         working-directory: .
