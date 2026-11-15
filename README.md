@@ -105,7 +105,7 @@ Keep `uses:` on its own indented line: Renovate's github-actions manager finds r
 
 The caller must grant `pages: write` and `id-token: write`: a called workflow can only narrow the caller's token permissions, never widen them, and the deploy job needs both.
 
-On every run it installs `docs/` with `npm ci`, builds the CLI with `reference.cli.build` (run from the repository root) when set, regenerates the CLI reference with `help2md` into `docs/src/content/docs/reference/cli`, and builds the site with `npx astro build` (which validates `site.yaml`). On a pull request it fails if the regenerated reference differs from the committed one and prints the diff. On a push to the default branch it builds the release versions when `versions:` is set and deploys `docs/dist` to GitHub Pages. A tag pushed with a workflow's `GITHUB_TOKEN` triggers no other workflow, so a new release shows up with the next deploy; to publish it at once, run the docs workflow on the default branch after the tag exists, for example from the release job.
+On every run it installs `docs/` with `npm ci`, runs `prebuild` (from the repository root) when set, builds the CLI with `reference.cli.build` (run from the repository root) when set, regenerates the CLI reference with `help2md` into `docs/src/content/docs/reference/cli`, and builds the site with `npx astro build` (which validates `site.yaml`). On a pull request it fails if the regenerated reference differs from the committed one and prints the diff. On a push to the default branch it builds the release versions when `versions:` is set and deploys `docs/dist` to GitHub Pages. A tag pushed with a workflow's `GITHUB_TOKEN` triggers no other workflow, so a new release shows up with the next deploy; to publish it at once, run the docs workflow on the default branch after the tag exists, for example from the release job.
 
 Inputs, all optional:
 
@@ -114,6 +114,7 @@ Inputs, all optional:
 | `directory` | `docs` | Docs directory, relative to the repository root. |
 | `nix` | `false` | Install Nix first, for `build: nix build` and friends. |
 | `deploy` | `true` | Deploy on pushes to the default branch. |
+| `prebuild` | | Shell command run from the repository root before the CLI build, for generated files the site serves, such as `docs/public/demo/`. Release versions keep the `public/` of their tag, so they do not get these files. |
 
 Runs on `ubuntu-latest`, which already has Rust (cargo, rustup) and Go (default version linked into `/usr/bin`; a newer `go` line in `go.mod` makes Go download that toolchain itself); see the [runner image tool list](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md).
 
