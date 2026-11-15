@@ -22,7 +22,7 @@ Options considered:
 - `docs-kit-versions` (a kit binary) builds each one after the main build: a copy of the docs directory with `src/content/docs` replaced from the tag and `src/assets` and `public/` laid over from it, built with the current lock file and `site.yaml`, with `DOCS_KIT_VERSION=vX.Y`. The copy lives under `.astro/` in the docs directory, so the build finds `node_modules` by walking up; a symlinked `node_modules` breaks Astro's module paths.
 - Refgen output is committed (the docs workflow fails a pull request when it is stale), so each tag carries its own CLI reference and no old binary is built.
 - The tags are the storage: no branch, no extra permission. Fixing a release's docs after the fact means a patch release.
-- `dist/versions.json` lists the default branch first, then the versions that built. A header switcher reads it at runtime, so a release's docs list releases made after it, and labels the newest release. Release pages carry a banner linking to the root, `noindex`, and no edit link (a tag cannot be edited on GitHub).
+- `dist/versions.json` lists the default branch first, then the versions that built. A header switcher reads it at runtime, so a release's docs list releases made after it, and labels the newest release. A banner, also filled from it, marks every version but the latest release as old or in development and links to the latest release. Release pages are `noindex` and have no edit link (a tag cannot be edited on GitHub).
 - A release that no longer builds with the current kit is skipped with a workflow warning; it must not block the deploy of the default branch.
 
 ## Consequences
