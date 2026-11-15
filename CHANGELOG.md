@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/Zebradil/docs-kit/compare/v0.11.1...v0.12.0) (2026-11-15)
+
+
+### Features
+
+* run a prebuild command before building the docs ([#69](https://github.com/Zebradil/docs-kit/issues/69)) ([8afe8d2](https://github.com/Zebradil/docs-kit/commit/8afe8d229cccf5dc8ae118104a19320f45ce437d))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @astrojs/starlight to v0.42.11 ([#68](https://github.com/Zebradil/docs-kit/issues/68)) ([84f7653](https://github.com/Zebradil/docs-kit/commit/84f76534d934fd3c3896f79dcbc151a03a7e31d4))
+
 ## [0.11.1](https://github.com/Zebradil/docs-kit/compare/v0.11.0...v0.11.1) (2026-11-15)
 
 
