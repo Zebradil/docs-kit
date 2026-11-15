@@ -3,17 +3,36 @@ import Default from '@astrojs/starlight/components/Banner.astro';
 import { root, version } from 'virtual:docs-kit/site';
 ---
 
-{
-  version && (
-    <div class="kit-version-banner" data-pagefind-ignore>
-      These docs are for {version}. <a href={root}>Read the current docs</a>.
-    </div>
-  )
-}
+{/* Filled from versions.json at runtime: which release is the latest changes after a release's docs are built. */}
+<kit-version-banner class="kit-version-banner" data-root={root} data-version={version} data-pagefind-ignore hidden>
+  These docs are for <span></span>. <a>Read the docs of the latest release</a>.
+</kit-version-banner>
 <Default />
 
+<script>
+  customElements.define(
+    'kit-version-banner',
+    class extends HTMLElement {
+      async connectedCallback() {
+        const { root, version } = this.dataset as { root: string; version: string };
+        const response = await fetch(`${root}versions.json`).catch(() => undefined);
+        if (!response?.ok) return;
+        const versions: { name: string; path: string; latest?: true }[] = await response.json();
+        const latest = versions.find((v) => v.latest);
+        const current = version && `${version}/`;
+        if (!latest || latest.path === current) return;
+        const branch = versions.find((v) => v.path === '')?.name;
+        this.querySelector('span')!.textContent = version || `the development version (${branch})`;
+        this.querySelector('a')!.href = root + latest.path;
+        this.hidden = false;
+      }
+    },
+  );
+</script>
+
 <style>
-  .kit-version-banner {
+  .kit-version-banner:not([hidden]) {
+    display: block;
     padding: var(--sl-nav-pad-y) var(--sl-nav-pad-x);
     background-color: var(--sl-color-bg-accent);
     color: var(--sl-color-text-invert);
