@@ -42,7 +42,7 @@ Install from `docs/`: `npm ci` when `package-lock.json` exists, `npm install` ot
 
 ## 3. site.yaml
 
-Missing: write `docs/site.yaml`, first line `# yaml-language-server: $schema=node_modules/@zebradil/docs-kit/schema/site.schema.json`. Present: add only the fields the validator reports missing.
+Missing: write `docs/site.yaml`, first line `# yaml-language-server: $schema=https://raw.githubusercontent.com/Zebradil/docs-kit/main/schema/site.schema.json`. Present: add only the fields the validator reports missing.
 
 Field sources, first hit wins. `docs/.audit.md` with a `fix-by: docs-bootstrap` gap carries draft values in its evidence; take them, rechecked against the sources below.
 

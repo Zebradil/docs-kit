@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Zebradil/docs-kit/schema/site.schema.json",
+  "$id": "https://raw.githubusercontent.com/Zebradil/docs-kit/main/schema/site.schema.json",
   "title": "docs-kit site.yaml",
   "description": "Content contract for a consuming project's docs/site.yaml: everything the docs site needs that is not a docs page.",
   "type": "object",
