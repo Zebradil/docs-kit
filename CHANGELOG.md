@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.1](https://github.com/Zebradil/docs-kit/compare/v0.12.0...v0.12.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @astrojs/starlight to v0.43.1 ([#75](https://github.com/Zebradil/docs-kit/issues/75)) ([8d59180](https://github.com/Zebradil/docs-kit/commit/8d59180a5708ae66d0470447176d1b82f9ece060))
+* **deps:** update dependency astro to v7.4.12 ([#74](https://github.com/Zebradil/docs-kit/issues/74)) ([e6ca562](https://github.com/Zebradil/docs-kit/commit/e6ca56258386ff75bf8e8d4f175191e99b322ed6))
+* **schema:** point site.yaml $schema at the raw GitHub URL ([092ce43](https://github.com/Zebradil/docs-kit/commit/092ce430809ed600d29984a5c6e57e245a979ef1))
+
 ## [0.12.0](https://github.com/Zebradil/docs-kit/compare/v0.11.1...v0.12.0) (2026-11-15)
 
 
